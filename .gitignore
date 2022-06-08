@@ -1,5 +1,6 @@
 ### repo specific ignores ###
 !example.auto.tfvars
+**.zip
 
 
 # Created by https://www.toptal.com/developers/gitignore/api/terraform,windows,linux,macos,visualstudiocode,notepadpp,python
