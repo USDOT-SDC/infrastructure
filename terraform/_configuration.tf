@@ -5,6 +5,14 @@ terraform {
       source = "hashicorp/aws"
       version = "~> 4.0"
     }
+    null = {
+      source = "hashicorp/null"
+      version = "~> 3.0"
+    }
+    archive = {
+      source = "hashicorp/archive"
+      version = "~> 2.0"
+    }
   }
   backend "s3" {
     // Variables can not be used here
@@ -14,8 +22,7 @@ terraform {
 }
 
 provider "aws" {
-  region = local.region
-  profile = "sdc"
+  region = "us-east-1"
   default_tags {
     tags = local.default_tags
   }

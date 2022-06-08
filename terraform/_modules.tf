@@ -17,4 +17,3 @@ module "web_portal" {
   source = "./web-portal"
   common = local.common
 }
-
