@@ -1,31 +1,11 @@
-#module "instance-scheduler" {
-#  source                        = "./scheduler.py"
-#  lambda_name                   = "instance-scheduler"
-#  lambda_handler                = "instance-scheduler.lambda_handler"
-#  aws_region                    = local.aws_region
-#}
-
-provider "aws" {
-  region  = "us-east-1"
-}
-
-data "aws_ssm_parameter" "environment" {
-  name = "/common/secrets/environment"
-}
-
-data "aws_ssm_parameter" "lambda_binary_bucket" {
-  name = "/common/secrets/lambda_binary_bucket"
-}
 
 locals {
   environment           = "${data.aws_ssm_parameter.environment.value}"
 
-  global_tags = {
-    "SourceRepo"  = "instance-scheduler"
+  tags = {
     "Project"     = "SDC-Platform"
-    "Team"        = "sdc-platform"
-    "Environment" = "${data.aws_ssm_parameter.environment.value}"
-    "Owner"       = "SDC support team"
+    "Team"        = "SDC-Platform"
+    "Owner"       = "SDC Support Team"
   }
 }
 
@@ -35,23 +15,46 @@ data "archive_file" "lambda_zip" {
     output_path = "instance-scheduler.zip"
 }
 
+
+data "archive_file" "lambda" {
+  type        = "zip"
+  output_path = "${path.module}/lambda/lambda.zip"
+
+  source {
+    content  = "${path.module}/lambda/src/schedule.py"
+    filename = "lambda_function.py"
+  }
+
+  source {
+    content  = "${path.module}/lambda/venv/Lib/site-packages/pytz/*.*"
+    filename = "pytz/*.*"
+  }
+
+  source {
+    content  = "${path.module}/lambda/venv/Lib/site-packages/yaml/*.*"
+    filename = "yaml/*.*"
+  }
+}
+
 resource "aws_lambda_function" "instance-scheduler" {
     filename = "instance-scheduler.zip"
-    function_name = "${local.environment}-instance-scheduler"
+    function_name = "instance-scheduler"
     role = aws_iam_role.instance_scheduler_role.arn
     handler = "scheduler.lambda_handler"
     timeout = 30
-    runtime = "python3.8"
-    tags = local.global_tags
+    runtime = "python3.9"
+    tags = local.tags
 }
 
 resource "aws_iam_role" "instance_scheduler_role" {
     name = "${local.environment}_instance_scheduler_role"
     assume_role_policy = file("assume_role_policy.json")
+    tags = local.tags
 }
 
 resource "aws_iam_role_policy" "instance_scheduler_policy" {
     name="${local.environment}_instance_scheduler_policy"
     role = aws_iam_role.instance_scheduler_role.id
     policy = file("instance_scheduler_policy.json")
+    tags = local.tags
 }

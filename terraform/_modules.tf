@@ -1,3 +1,8 @@
+module "instance-scheduler" {
+  source = "./instance-scheduler"
+  common = local.common
+}
+
 module "gitlab" {
   source = "./gitlab"
   common = local.common
