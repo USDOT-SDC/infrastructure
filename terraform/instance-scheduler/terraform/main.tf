@@ -13,6 +13,10 @@ data "aws_ssm_parameter" "environment" {
   name = "/common/secrets/environment"
 }
 
+data "aws_ssm_parameter" "lambda_binary_bucket" {
+  name = "/common/secrets/lambda_binary_bucket"
+}
+
 locals {
   environment           = "${data.aws_ssm_parameter.environment.value}"
 
@@ -33,21 +37,21 @@ data "archive_file" "lambda_zip" {
 
 resource "aws_lambda_function" "instance-scheduler" {
     filename = "instance-scheduler.zip"
-    function_name = "${local.environment}-dot-sdc-instance-scheduler"
-    role = aws_iam_role.instance-schedule_role.arn
+    function_name = "${local.environment}-instance-scheduler"
+    role = aws_iam_role.instance_scheduler_role.arn
     handler = "scheduler.lambda_handler"
     timeout = 30
     runtime = "python3.8"
-
+    tags = local.global_tags
 }
 
-resource "aws_iam_role" "instance-schedule_role" {
-    name = "${local.environment}-instance-schedule-role"
+resource "aws_iam_role" "instance_scheduler_role" {
+    name = "${local.environment}_instance_scheduler_role"
     assume_role_policy = file("assume_role_policy.json")
 }
 
-resource "aws_iam_role_policy" "instance-schedule_policy" {
-    name="${local.environment}-instance-schedule-policy"
-    role = aws_iam_role.instance-schedule_role.id
+resource "aws_iam_role_policy" "instance_scheduler_policy" {
+    name="${local.environment}_instance_scheduler_policy"
+    role = aws_iam_role.instance_scheduler_role.id
     policy = file("instance_scheduler_policy.json")
 }

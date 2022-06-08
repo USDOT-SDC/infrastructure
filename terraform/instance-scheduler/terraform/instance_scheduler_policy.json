@@ -2,13 +2,13 @@
     "Version": "2012-10-17",
     "Statement": [
         {
-          "Sid": "instance-scheduler",
+          "Sid": "Instance1",
           "Effect": "Allow",
           "Action": "*",
           "Resource": "*"
         },
         {
-            "Sid": "instance-scheduler",
+            "Sid": "Instance2",
             "Effect": "Allow",
             "Action": [
                 "ec2:*"
