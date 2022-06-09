@@ -1,6 +1,17 @@
 ### repo specific ignores ###
+# Lock files
+**/terraform/**/.terraform.lock.hcl
+
+# Keep the example file
 !example.auto.tfvars
-**.zip
+
+# Local config files
+**/terraform/**/*.conf
+
+# Lambda deployment packages
+**/terraform/**/lambdas/**/deployment-package
+**/terraform/**/lambdas/**/deployment-package/**
+**/terraform/**/lambdas/**/*.zip
 
 
 # Created by https://www.toptal.com/developers/gitignore/api/terraform,windows,linux,macos,visualstudiocode,notepadpp,python
@@ -214,14 +225,8 @@ dmypy.json
 cython_debug/
 
 ### Terraform ###
-# Local .terraform.lock files
-**/.terraform.lock.hcl
-
 # Local .terraform directories
 **/.terraform/*
-
-# Local config files
-**/terraform/**/*.conf
 
 # .tfstate files
 *.tfstate
@@ -237,6 +242,7 @@ crash.*.log
 # to change depending on the environment.
 *.tfvars
 *.tfvars.json
+!example.auto.tfvars
 
 # Ignore override files as they are usually used to override resources locally and so
 # are not checked in
