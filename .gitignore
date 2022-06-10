@@ -12,7 +12,8 @@
 **/terraform/**/lambdas/**/deployment-package
 **/terraform/**/lambdas/**/deployment-package/**
 **/terraform/**/lambdas/**/*.zip
-
+**/terraform/**/lambdas/**/*.log
+**/terraform/**/lambdas/**/keep-this-venv
 
 # Created by https://www.toptal.com/developers/gitignore/api/terraform,windows,linux,macos,visualstudiocode,notepadpp,python
 # Edit at https://www.toptal.com/developers/gitignore?templates=terraform,windows,linux,macos,visualstudiocode,notepadpp,python
