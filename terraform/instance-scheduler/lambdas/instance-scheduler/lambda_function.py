@@ -130,10 +130,10 @@ def lambda_handler(event, context):
     s3 = boto3.resource('s3')
     for bucket in s3.buckets.all(): 
         if bucket.name.startswith("dev.sdc.dot.gov.team") or "wydot" in bucket.name:
-            #print( bucket.name)
+            print( "in " + bucket.name + " bucket")
             #ge all the yaml files contained in the workstations-schedule
             for objects in bucket.objects.filter(Prefix="Workstations-Schedule/"):
-                if (objects.key.endswith('yaml') or objects.key.endwith('yml')):
+                if (objects.key.endswith('yaml') or objects.key.endswith('yml')):
                     print(objects.key)
                     print( objects.get()['Body'].read() )
                     dct = yaml.safe_load( objects.get()['Body'].read() )
