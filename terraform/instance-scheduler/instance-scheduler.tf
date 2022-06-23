@@ -13,9 +13,9 @@ resource "null_resource" "run-deploy" {
     timestamp = timestamp()
   }
   provisioner "local-exec" {
-    command = "python instance-scheduler/lambdas/instance-scheduler/deploy.py"
+    command     = "python instance-scheduler/lambdas/instance-scheduler/deploy.py"
     interpreter = ["PowerShell", "-Command"]
-    on_failure = continue
+    on_failure  = continue
   }
 }
 
@@ -26,8 +26,13 @@ resource "aws_lambda_function" "instance-scheduler" {
   role             = aws_iam_role.instance_scheduler_role.arn
   handler          = "lambda_function.lambda_handler"
   runtime          = "python3.9"
-  depends_on = [null_resource.run-deploy]
-  tags = local.tags
+  depends_on       = [null_resource.run-deploy]
+  tags             = local.tags
+  timeout          = "300"
+  vpc_config {
+    subnet_ids         = var.common.network.subnets.ids
+    security_group_ids = [var.common.network.default_security_group.id]
+  }
 }
 
 resource "aws_iam_role" "instance_scheduler_role" {
