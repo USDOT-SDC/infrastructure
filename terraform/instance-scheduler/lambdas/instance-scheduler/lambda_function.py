@@ -1,6 +1,6 @@
-#from http import client
-# one change
+from pydoc import cli
 from time import strptime
+from tokenize import Floatnumber
 import boto3
 import datetime
 import yaml
@@ -13,38 +13,107 @@ days = ["", "monday", "tuesday", "wednesday",
 region = "us-east-1"
 
 
-def get_instance_action(iid):
+def get_instance_shutdown_time(iid):
+    print("in get instance shutdown time")
     ec2 = boto3.resource('ec2', region)
     ec2instance = ec2.Instance(iid)
-    action = ''
+    shutdown_time = ''
     for tags in ec2instance.tags:
-        if tags["Key"] == 'Action':
-            action = tags["Value"]
-    return action
+        if tags["Key"] == 'ShutdownTime':
+            shutdown_time = tags["Value"]
+    print("the time to shut this instance down is: ", shutdown_time)
+    return shutdown_time
 
 
-def start_stop_instance(workstation, startorstop):
-    print("start/stop the instance")
-    ec2 = boto3.resource('ec2', region)
-    client = boto3.client('ec2', region)
+def instance_is_running(iid):
+    print("checking the instance status")
+    ec2 = boto3.resource('ec2', 'us-east-1')
+    instance = ec2.Instance(iid)
+    if instance.state['Name'] == 'running':
+        print("instance is running")
+        return True
+    else:
+        print("instance is not running")
+        return False
 
-    try:
-        instances = ec2.instances.filter(
-            Filters=[{'Name': 'tag:Name', 'Values': [workstation]}])
-    except Exception as e:
-        print(e)
-        return
 
-    if(startorstop == "start"):
-        for instance in instances:
-            print(instance.id)
-            instance.start()
-    elif(startorstop == "stop"):
-        for instance in instances:
-            if (get_instance_action(instance.id).tolower() == "stop"):
-                instance.stop()
+def set_shutdown_time(iid, sdtime):
+    print("in set shutdown time")
+    ec2 = boto3.resource('ec2', region_name='us-east-1')
+    print("let's get the instance first")
+    instances = ec2.instances.filter(
+        InstanceIds=[
+            iid,
+        ],
+    )
+    print("now set the tag")
+    response = list(instances)[0].create_tags(
+        Resources=[
+            iid,
+        ],
+        Tags=[
+            {
+                'Key': 'ShutdownTime',
+                'Value': sdtime
+            },
+        ]
+    )
+
+
+def start_instance(workstation, endtime):
+    print("start the instance")
+    print("instance name, ", workstation)
+
+    ec2c = boto3.resource('ec2', region_name='us-east-1')
+    print("after creating ec2 resource")
+    instances = ec2c.instances.filter(
+        Filters=[{'Name': 'tag:Name', 'Values': [workstation]}])
+    print("the number of instnace is ", len(list(instances)))
+    print("the first instance is: ", list(instances)[0])
+    instance = list(instances)[0]
+    iid = list(instances)[0].id
+    # get the instance status, if it is already running check the flag
+    # if it is not set leave it alone, otherwise update with the latst time
+    # if the machine is not running start it and set the flag
+    if (instance_is_running(iid)):
+        # get the flag value
+        sdtime = get_instance_shutdown_time(iid)
+        if(sdtime != ""):
+            print("this instance was running a job already. update end time")
+            set_shutdown_time(iid, endtime)
+    else:
+        print("this instance was not running. start it and upate the end time")
+        instance.start()
+        set_shutdown_time(iid, endtime)
 
     print("done with starting the instance")
+
+
+def remove_tag(iid):
+    client = boto3.client('ec2', region_name='us-east-1')
+    client.delete_tags(Resources=[iid], Tags=[{"Key": "ShutdownTime"}])
+
+
+def stop_instance(workstation, current_time):
+    print("in stop instance")
+    print("instance name, ", workstation)
+
+    ec2c = boto3.resource('ec2', region_name='us-east-1')
+    print("after creating ec2 resource")
+    instances = ec2c.instances.filter(
+        Filters=[{'Name': 'tag:Name', 'Values': [workstation]}])
+    print("the number of instnace is ", len(list(instances)))
+    print("the first instance is: ", list(instances)[0])
+
+    instance = list(instances)[0]
+    # get the shutdown tag and compare to current time
+    when_to_shutdown = get_instance_shutdown_time(instance.id)
+    if(when_to_shutdown != ""):
+        if(datetime.datetime.strptime(when_to_shutdown, "%Y-%m-%d").date() >= current_time):
+            remove_tag(instance.id)
+            instance.stop()
+
+    print("don with stopping the instance")
 
 
 def isin_time_period(start_time, end_time, current_time):
@@ -55,48 +124,41 @@ def isin_time_period(start_time, end_time, current_time):
 
 
 def process_daily(rtime, duration, workstation, tz):
+    try:
+        print("rtime is:", rtime)
+        x = str(rtime)
+        rhours = int(x[0:2])
+        rminutes = int(x[3:5])
+        print("rhours is: ", rhours)
+        print("rminutes is: ", rminutes)
 
-    x = str(rtime)
-    rhours = int(x[0:2])
-    rminutes = int(x[2:4])
-
-    y = str(duration)
-    dhours = int(y[0:2])
-    dminutes = int(y[2:4])
+        y = str(duration)
+        dhours = int(y[0:2])
+        dminutes = int(y[3:5])
+        print("duration: ", duration)
+        print("dhours is: ", dhours)
+        print("dminutes is: ",  dminutes)
+    except:
+        print("start time or duration of the job are invalid or not well formatted")
+        return
 
     dt_current = datetime.datetime.now(pytz.timezone(tz))
 
     dt_start = dt_current.replace(hour=rhours, minute=rminutes)
 
     dt_end = dt_start + datetime.timedelta(hours=dhours, minutes=dminutes)
-    print(dt_current)
-    print(dt_start)
-    print(dt_end)
+    print("current time ", dt_current)
+    print("start time ", dt_start)
+    print("end time ", dt_end)
 
     if (dt_current > dt_end):
-        print("beyond the end time")
-        start_stop_instance(workstation, "stop")
+        print("This job starting time is already gone, should stop the instance")
+        stop_instance(workstation, dt_current)
     elif (isin_time_period(dt_start+datetime.timedelta(hours=-1), dt_end, dt_current)):
-        start_stop_instance(workstation, "start")
+        print("let's start the worksation")
+        start_instance(workstation, dt_end.strftime("%Y-%m-%d"))
     else:
         print("Leave the instance as is... don't touch it")
-
-
-def last_day_of_month(date):
-    last_day = datetime.datetime(
-        date.year, date.month, calendar.monthlen(date.year, date.month))
-    return last_day.strftime('%Y-%m-%d')
-
-
-def is_date(date):
-    print("checking if a string conform to the date format")
-    try:
-        thedate = strptime(date, "%Y-%m-%d")
-    except Exception as e:
-        print(e)
-        return False
-    else:
-        return thedate
 
 
 def process_schedule(dict):
@@ -104,48 +166,39 @@ def process_schedule(dict):
     wkst = dict["workstation"]["name"]
     tz = dict["workstation"]["timezone"]
 
-    print("length of dictionary is: ", len(dict))
     for job in dict['workstation']['jobs']:
-        print(job["day"])
+        print("run this type of job: ", job["day"])
         if(job["day"].lower() == "daily"):
-            print("will start porcessing")
+            print("will start porcessing daily, run daily at a specific time")
             process_daily(job["time"], job["duration"], wkst, tz)
-        elif ((job["day"].lower() in days)):
+            continue
+
+        elif ((job["day"].lower() in days) and (datetime.date.today().strftime("%A").lower() == job["day"].lower())):
             print("day of the week")
             process_daily(job["time"], job["duration"], wkst, tz)
 
-        elif (type(job["day"]) is int):
-            print(job["day"])
-            # if it is negative one, get the last day of the month
-            if (int(job["day"]) < 0):
-                # get the last day of the month, compare it to today's date
-                if(calendar.monthrange(datetime.datetime.now().year, datetime.datetime.now().month)[1] == datetime.date.now().day):
-                    process_daily(job["time"], job["duration"], wkst, tz)
-            elif(int(job["day"] == datetime.datetime.now().day)):
-                process_daily(job["time"], job["duration"], wkst, tz)
+        elif(datetime.datetime.strptime(job["day"], "%Y-%m-%d").date() == datetime.date.today()):
 
-        elif(type(is_date(job["day"])) is datetime and (is_date(job["day"].day == datetime.date.today().day))):
+            print("processing a date")
+            print("config date: ", job["day"])
+            print("actual date: ", datetime.date.today())
             process_daily(job["time"], job["duration"], wkst, tz)
+            continue
 
         else:
-            print("we don't know yet")
-
-    return
+            print("unknow option")
 
 
 def lambda_handler(event, context):
-
+    # or "wydot" in bucket.name
     s3 = boto3.resource('s3')
     for bucket in s3.buckets.all():
-        if bucket.name.startswith("dev.sdc.dot.gov.team") or "wydot" in bucket.name:
+        if (bucket.name.startswith("dev.sdc.dot.gov.team")):
             print("in " + bucket.name + " bucket")
             # ge all the yaml files contained in the workstations-schedule
-            for objects in bucket.objects.filter(Prefix="Workstations-Schedule/"):
-                if (objects.key.endswith('yaml') or objects.key.endswith('yml')):
-                    print(objects.key)
-                    print(objects.get()['Body'].read())
-                    dct = yaml.safe_load(objects.get()['Body'].read())
-                    try:
-                        process_schedule(dct)
-                    except Exception as e:
-                        print(e)
+            for object in bucket.objects.filter(Prefix="Workstations-Schedule/"):
+                if (object.key.endswith('yaml') or object.key.endswith('yml')):
+                    print(object.key)
+                    dct = yaml.safe_load(object.get()['Body'].read())
+                    # let's parse and execute the yaml file
+                    process_schedule(dct)
