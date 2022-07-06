@@ -1,4 +1,4 @@
-# Version 0.0.1 Test Plan
+# Version 0.1.0 Test Plan
 This Test Plan is designed to prescribe the scope, objectives, test activities and deliverables of the testing activities for the Research Teams.
 
 ### In Scope Testing
