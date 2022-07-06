@@ -1,4 +1,4 @@
-# Version 0.0.1 Deployment Plan
+# Version 0.1.0 Deployment Plan
 
 ### Deployment Build Environment
 - Windows
