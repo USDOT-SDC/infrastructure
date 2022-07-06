@@ -6,8 +6,8 @@ Verify the following and attach the results to the Pull Request as a comment.
 - Check that the following have deployed correctly
   - Lambda: instance-scheduler
   - IAM Role: instance_scheduler_role
-- Ensure the function works IAW the following process flow
-  ![Instance Scheduler](Instance Scheduler.png "Instance Scheduler")
+- Ensure the function works IAW the following process flow  
+  ![Instance Scheduler](./Instance%20Scheduler.png "Instance Scheduler")
 
 ### Out of Scope Testing
 Verify the following if in scope testing reveals issues or issues are suspected, attach the results to the Pull Request as a comment.
