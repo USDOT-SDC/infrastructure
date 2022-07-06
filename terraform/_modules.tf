@@ -1,3 +1,8 @@
+module "edge-db" {
+  source = "./edge-db"
+  common = local.common
+}
+
 module "instance-scheduler" {
   source = "./instance-scheduler"
   common = local.common
