@@ -248,7 +248,7 @@ def process_schedule(dict):
 
     # before parsing executing the yaml file, check the turnoff parameter and turnoff the machine if it is
     # after this time, clear the shutoff tag and turnoff the machine
-    check_turnoff_time(wkst, tz)
+    #check_turnoff_time(wkst, tz)
 
     for job in dict['workstation']['jobs']:
         print("run this type of job: ", job["day"])
