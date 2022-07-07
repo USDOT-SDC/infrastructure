@@ -27,12 +27,12 @@ resource "aws_lambda_function" "instance-scheduler" {
   handler          = "lambda_function.lambda_handler"
   runtime          = "python3.9"
   depends_on       = [null_resource.run-deploy]
-  tags             = local.tags
   timeout          = "300"
   vpc_config {
     subnet_ids         = var.common.network.subnets.ids
     security_group_ids = [var.common.network.default_security_group.id]
   }
+  tags = local.tags
 }
 
 resource "aws_iam_role" "instance_scheduler_role" {
@@ -45,4 +45,17 @@ resource "aws_iam_role_policy" "instance_scheduler_policy" {
   name   = "instance_scheduler_policy"
   role   = aws_iam_role.instance_scheduler_role.id
   policy = file("instance-scheduler/instance_scheduler_policy.json")
+}
+
+resource "aws_cloudwatch_event_rule" "instance_scheduler" {
+  name                = "instance_scheduler"
+  description         = "Triggers the ${aws_lambda_function.instance-scheduler.name} Lambda"
+  schedule_expression = "cron(0 * * * *)" # at minute 0, every hour, day of the month, month, day of the week
+  tags = local.tags
+}
+
+resource "aws_cloudwatch_event_target" "instance_scheduler_lambda" {
+  rule      = aws_cloudwatch_event_rule.instance_scheduler.name
+  target_id = "InvokeLambda"
+  arn       = aws_lambda_function.instance-scheduler.arn
 }
