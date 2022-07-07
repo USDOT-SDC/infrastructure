@@ -1,6 +1,19 @@
 ### repo specific ignores ###
+# Lock files
+**/terraform/**/.terraform.lock.hcl
+
+# Keep the example file
 !example.auto.tfvars
 
+# Local config files
+**/terraform/**/*.conf
+
+# Lambda deployment packages
+**/terraform/**/lambdas/**/deployment-package
+**/terraform/**/lambdas/**/deployment-package/**
+**/terraform/**/lambdas/**/*.zip
+**/terraform/**/lambdas/**/*.log
+**/terraform/**/lambdas/**/keep-this-venv
 
 # Created by https://www.toptal.com/developers/gitignore/api/terraform,windows,linux,macos,visualstudiocode,notepadpp,python
 # Edit at https://www.toptal.com/developers/gitignore?templates=terraform,windows,linux,macos,visualstudiocode,notepadpp,python
@@ -230,6 +243,7 @@ crash.*.log
 # to change depending on the environment.
 *.tfvars
 *.tfvars.json
+!example.auto.tfvars
 
 # Ignore override files as they are usually used to override resources locally and so
 # are not checked in

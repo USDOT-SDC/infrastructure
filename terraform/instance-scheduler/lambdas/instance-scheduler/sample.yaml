@@ -1,0 +1,13 @@
+workstation :
+  name : Lambda-Testing
+  timezone : US/Eastern 
+  jobs :
+    - day : daily
+      time : "06:10"
+      duration : "00:45"
+    - day : thursday
+      time : "04:45"
+      duration : "01:00"
+    - day : "2022-06-23"
+      time : "02:15"
+      duration : "01:00"

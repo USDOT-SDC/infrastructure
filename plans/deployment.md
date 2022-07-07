@@ -1,13 +1,19 @@
-# Version 0.0.1 Deployment Plan
+# Version 0.1.0 Deployment Plan
 
 ### Deployment Build Environment
-- Windows or Linux
+- Windows
 - Install or update as needed
    - AWS CLI [version 2](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
-   - Terraform [1.1.9](https://releases.hashicorp.com/terraform/1.1.9/)
-      - Updated from 1.0.9
-   - AWS Provider [4.13.0](https://registry.terraform.io/providers/hashicorp/aws/4.13.0)
-      - Updated from 3.62.0
+   - Terraform [1.2.2](https://releases.hashicorp.com/terraform/1.2.2/)
+      - Updated from None
+   - hashicorp/aws [4.17.1](https://registry.terraform.io/providers/hashicorp/aws/4.17.1)
+      - Updated from None
+   - hashicorp/archive [2.2.0](https://registry.terraform.io/providers/hashicorp/archive/2.2.0)
+      - Updated from None
+   - hashicorp/local [2.2.3](https://registry.terraform.io/providers/hashicorp/local/2.2.3)
+      - Updated from None
+   - hashicorp/null [3.1.1](https://registry.terraform.io/providers/hashicorp/null/3.1.1)
+      - Updated from None
 
 ### Deployment
 Notes:

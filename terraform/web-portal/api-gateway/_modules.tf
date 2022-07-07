@@ -1,9 +1,9 @@
 module "login_gov" {
   source = "./login-gov"
-  common = local.common
+  common = var.common
 }
 
 module "web_portal" {
   source = "./web-portal"
-  common = local.common
+  common = var.common
 }
