@@ -12,6 +12,62 @@ data "aws_subnet" "support" {
   }
 }
 
+resource "aws_ssm_parameter" "edge_db_edge_server" {
+  name  = "/${var.repository}/${local.module}/edge_db_edge/server"
+  type  = "String"
+  value = "_"
+  lifecycle {
+    ignore_changes = [value]
+  }
+  tags = local.tags
+}
+data "aws_ssm_parameter" "edge_db_edge_server" {
+  name       = "/${var.repository}/${local.module}/edge_db_edge/server"
+  depends_on = [aws_ssm_parameter.edge_db_edge_server]
+}
+
+resource "aws_ssm_parameter" "edge_db_edge_port" {
+  name  = "/${var.repository}/${local.module}/edge_db_edge/port"
+  type  = "String"
+  value = "_"
+  lifecycle {
+    ignore_changes = [value]
+  }
+  tags = local.tags
+}
+data "aws_ssm_parameter" "edge_db_edge_port" {
+  name       = "/${var.repository}/${local.module}/edge_db_edge/port"
+  depends_on = [aws_ssm_parameter.edge_db_edge_port]
+}
+
+resource "aws_ssm_parameter" "edge_db_edge_user" {
+  name  = "/${var.repository}/${local.module}/edge_db_edge/user"
+  type  = "String"
+  value = "_"
+  lifecycle {
+    ignore_changes = [value]
+  }
+  tags = local.tags
+}
+data "aws_ssm_parameter" "edge_db_edge_user" {
+  name       = "/${var.repository}/${local.module}/edge_db_edge/user"
+  depends_on = [aws_ssm_parameter.edge_db_edge_user]
+}
+
+resource "aws_ssm_parameter" "edge_db_edge_password" {
+  name  = "/${var.repository}/${local.module}/edge_db_edge/password"
+  type  = "String"
+  value = "_"
+  lifecycle {
+    ignore_changes = [value]
+  }
+  tags = local.tags
+}
+data "aws_ssm_parameter" "edge_db_edge_password" {
+  name       = "/${var.repository}/${local.module}/edge_db_edge/password"
+  depends_on = [aws_ssm_parameter.edge_db_edge_password]
+}
+
 resource "aws_ssm_parameter" "edge_db_internal_server" {
   name  = "/${var.repository}/${local.module}/edge_db_internal/server"
   type  = "String"
@@ -66,4 +122,4 @@ resource "aws_ssm_parameter" "edge_db_internal_password" {
 data "aws_ssm_parameter" "edge_db_internal_password" {
   name       = "/${var.repository}/${local.module}/edge_db_internal/password"
   depends_on = [aws_ssm_parameter.edge_db_internal_password]
-}
+} 
