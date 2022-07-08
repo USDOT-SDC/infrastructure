@@ -78,6 +78,10 @@ resource "aws_glue_workflow" "nightly_load" {
   name = "${var.repository}.glue.job.${local.module}.nightly_load"
 }
 
+resource "aws_glue_workflow" "new_table" {
+  name = "${var.repository}.glue.job.${local.module}.new_table"
+}
+
 # === ETL -> Jobs ===
 resource "aws_glue_job" "nightly_load" {
   name        = "${var.repository}.glue.job.${local.module}.nightly_load"
@@ -159,7 +163,7 @@ resource "aws_glue_trigger" "nightly_load-start" {
 resource "aws_glue_trigger" "nightly_load_job" {
   name    = "${var.repository}.glue.trigger.${local.module}.nightly_load_job"
   type    = "CONDITIONAL"
-  workflow_name = aws_glue_workflow.example.name
+  workflow_name = aws_glue_workflow.nightly_load.name
 
   predicate {
     conditions {
@@ -176,7 +180,7 @@ resource "aws_glue_trigger" "nightly_load_job" {
 resource "aws_glue_trigger" "edge_crawler" {
   name    = "${var.repository}.glue.trigger.${local.module}.nightly_load"
   type    = "CONDITIONAL"
-  workflow_name = aws_glue_workflow.example.name
+  workflow_name = aws_glue_workflow.nightly_load.name
 
   predicate {
     conditions {
@@ -187,6 +191,33 @@ resource "aws_glue_trigger" "edge_crawler" {
 
   actions {
     crawler_name = aws_glue_crawler.edge_db_edge.name
+  }
+}
+
+resource "aws_glue_trigger" "new_table_start" {
+  name          = "${var.repository}.glue.trigger.${local.module}.new_table"
+  type     = "ON-DEMAND"
+  workflow_name = aws_glue_workflow.new_table.name
+
+  actions {
+    crawler_name = aws_glue_crawler.edge_db_internal.name
+  }
+}
+
+resource "aws_glue_trigger" "poplate_schema_job" {
+  name    = "${var.repository}.glue.trigger.${local.module}.populate_schema_job"
+  type    = "CONDITIONAL"
+  workflow_name = aws_glue_workflow.new_table.name
+
+  predicate {
+    conditions {
+      crawler_name = aws_glue_crawler.edge_db_internal.name
+      crawl_state    = "SUCCEEDED"
+    }
+  }
+
+  actions {
+    job_name = aws_glue_job.populate_schema.name
   }
 }
 
