@@ -43,9 +43,12 @@ run_properties = get_workflow_params(args)
 print(f'Run Properties: {run_properties}')
 S3KeyHash = get_runtime_param(run_properties, "S3KeyHash")
 RequestedBy_Epoch = get_runtime_param(run_properties,"RequestedByEpoch")
+
+# Glue data catalog changes '.' and '-' to '_'. The following ensures any '.' or '-' get replaced with '_'
 databaseName = get_runtime_param(run_properties,"databaseName").replace('-', '_').replace('.', '_')
 tableName = get_runtime_param(run_properties,"tableName").replace('-', '_').replace('.', '_')
 internalSchema = get_runtime_param(run_properties,"internalSchema").replace('-', '_').replace('.', '_')
+
 listOfPOC = get_runtime_param(run_properties,"listOfPOC").split(",")
 userID = get_runtime_param(run_properties,"userID")
 userEmail = get_runtime_param(run_properties,"userEmail").split(",")
