@@ -74,7 +74,9 @@ resource "aws_glue_crawler" "edge_db_edge" {
 # === ETL -> Blueprints ===
 
 # === ETL -> Workflows ===
-
+resource "aws_glue_workflow" "nightly_load" {
+  name = "${var.repository}.glue.job.${local.module}.nightly_load"
+}
 
 # === ETL -> Jobs ===
 resource "aws_glue_job" "nightly_load" {
@@ -143,45 +145,48 @@ resource "aws_s3_bucket_object" "populate_schema" {
 # === ETL -> Jobs -> ML Transforms ===
 
 # === ETL -> Triggers ===
-resource "aws_glue_trigger" "internal_crawler" {
-  name     = "${var.repository}.glue.trigger.${local.module}.internal_crawler"
+resource "aws_glue_trigger" "nightly_load-start" {
+  name          = "${var.repository}.glue.trigger.${local.module}.nightly_load"
   schedule = "cron(0 3 * * ? *)"
   type     = "SCHEDULED"
+  workflow_name = aws_glue_workflow.nightly_load.name
+
   actions {
     crawler_name = aws_glue_crawler.edge_db_internal.name
   }
-  tags = local.tags
 }
 
-resource "aws_glue_trigger" "nightly_load" {
-  name    = "${var.repository}.glue.trigger.${local.module}.nightly_load"
+resource "aws_glue_trigger" "nightly_load_job" {
+  name    = "${var.repository}.glue.trigger.${local.module}.nightly_load_job"
   type    = "CONDITIONAL"
-
-  actions {
-    job_name = aws_glue_job.nightly_load.name
-  }
+  workflow_name = aws_glue_workflow.example.name
 
   predicate {
     conditions {
       crawler_name = aws_glue_crawler.edge_db_internal.name
-      crawl_state  = "SUCCEEDED"
+      crawl_state    = "SUCCEEDED"
     }
+  }
+
+  actions {
+    job_name = aws_glue_job.nightly_load.name
   }
 }
 
 resource "aws_glue_trigger" "edge_crawler" {
   name    = "${var.repository}.glue.trigger.${local.module}.nightly_load"
   type    = "CONDITIONAL"
-
-  actions {
-    crawler_name = aws_glue_crawler.edge_db_edge.name
-  }
+  workflow_name = aws_glue_workflow.example.name
 
   predicate {
     conditions {
       job_name = aws_glue_job.nightly_load.name
       state  = "SUCCEEDED"
     }
+  }
+
+  actions {
+    crawler_name = aws_glue_crawler.edge_db_edge.name
   }
 }
 
