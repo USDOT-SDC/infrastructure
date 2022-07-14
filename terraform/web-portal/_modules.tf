@@ -22,3 +22,11 @@ module "web_app" {
   source = "./web-app"
   common = var.common
 }
+
+output "webportal_api" {
+  value = module.api-gateway.webportal_api
+}
+
+output "webportal_authorizer" {
+  value = module.api-gateway.webportal_authorizer
+}

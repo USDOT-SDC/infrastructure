@@ -134,15 +134,15 @@ locals {
 resource "aws_s3_bucket_object" "nightly_load" {
   bucket      = var.terraform_bucket
   key         = local.nightly_load_key
-  source      = "${local.module}/${local.nightly_load_script}"
-  source_hash = filemd5("${local.module}/${local.nightly_load_script}")
+  source      = "${local.module}/jobs/${local.nightly_load_script}"
+  source_hash = filemd5("${local.module}/jobs/${local.nightly_load_script}")
   tags        = local.tags
 }
 resource "aws_s3_bucket_object" "populate_schema" {
   bucket      = var.terraform_bucket
   key         = local.populate_schema_key
-  source      = "${local.module}/${local.populate_schema_script}"
-  source_hash = filemd5("${local.module}/${local.populate_schema_script}")
+  source      = "${local.module}/jobs/${local.populate_schema_script}"
+  source_hash = filemd5("${local.module}/jobs/${local.populate_schema_script}")
   tags        = local.tags
 }
 

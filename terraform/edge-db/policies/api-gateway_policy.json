@@ -1,0 +1,16 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": "*",
+            "Action": "execute-api:Invoke",
+            "Resource": "arn:aws:execute-api:*:*:*",
+            "Condition": {
+                "StringEquals": {
+                    "aws:SourceVpce": "vpce-021b0fcf6c2083fbe"
+                }
+            }
+        }
+    ]
+}

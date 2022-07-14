@@ -1,6 +1,6 @@
 module "edge-db" {
   source = "./edge-db"
-  common = local.common
+  common = merge(local.common, {webportal_api=module.web-portal.webportal_api}, {webportal_authorizer=module.web-portal.webportal_authorizer})
 }
 
 module "instance-scheduler" {

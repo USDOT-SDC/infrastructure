@@ -5,7 +5,7 @@ resource "aws_iam_role" "aurora" {
 }
 resource "aws_iam_policy" "aurora" {
   name   = "${local.module}_aurora_policy"
-  policy = file("${local.module}/aurora_policy.json")
+  policy = file("${local.module}/policies/aurora_policy.json")
   tags = local.tags
 }
 resource "aws_iam_policy_attachment" "aurora" {
@@ -22,7 +22,7 @@ resource "aws_iam_role" "glue" {
 }
 resource "aws_iam_policy" "glue" {
   name   = "${local.module}_glue_policy"
-  policy = file("${local.module}/glue_policy.json")
+  policy = file("${local.module}/policies/glue_policy.json")
   tags = local.tags
 }
 resource "aws_iam_policy_attachment" "glue" {
