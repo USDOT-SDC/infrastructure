@@ -12,11 +12,6 @@ variable "lambda_zip_path" {
   default = "../src/"
 }
 
-variable "elasticsearch_url" {
-  type = string
-  description = "Elastic Search URL endpoint"
-}
-
 variable "log_level" {
   type    = string
   default = "INFO"
@@ -36,7 +31,7 @@ locals {
   account_number        = "${data.aws_ssm_parameter.account_number.value}"
   environment           = "${data.aws_ssm_parameter.environment.value}"
   requests_aws4auth     = var.requests_aws4auth
-  elasticsearch_url     = var.elasticsearch_url
+  elasticsearch_url     = "${data.aws_ssm_parameter.elasticsearch_url.value}"
   log_level             = var.log_level
 
   global_tags = {

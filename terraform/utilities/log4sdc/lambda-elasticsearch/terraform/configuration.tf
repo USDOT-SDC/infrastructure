@@ -23,6 +23,10 @@ data "aws_ssm_parameter" "environment" {
   name = "/common/secrets/environment"
 }
 
+data "aws_ssm_parameter" "elasticsearch_url" {
+  name = "/log4sdc/elasticsearch_url"
+}
+
 data "aws_ssm_parameter" "lambda_binary_bucket" {
   name = "/common/secrets/lambda_binary_bucket"
 }
