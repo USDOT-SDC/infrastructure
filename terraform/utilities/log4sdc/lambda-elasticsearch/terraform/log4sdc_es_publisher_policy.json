@@ -1,0 +1,36 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+          "Sid": "VisualEditor1",
+          "Effect": "Allow",
+          "Action": "es:*",
+          "Resource": "*"
+        },
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "cloudtrail:LookupEvents",
+                "cloudtrail:StartLogging",
+                "cloudtrail:GetTrailStatus",
+                "ec2:DeleteVolume",
+                "ssm:CreateOpsItem",
+                "logs:CreateLogGroup",
+                "logs:PutLogEvents",
+                "cloudtrail:DescribeTrails",
+                "ec2:DescribeVolumeAttribute",
+                "logs:CreateLogStream",
+                "sns:Publish",
+                "ec2:DescribeVolumeStatus",
+                "cloudtrail:CreateTrail",
+                "ec2:DescribeVolumes",
+                "sqs:ReceiveMessage",
+                "sqs:DeleteMessage",
+                "sqs:GetQueueAttributes"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+
