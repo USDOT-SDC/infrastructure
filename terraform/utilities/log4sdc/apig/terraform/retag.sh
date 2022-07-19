@@ -1,7 +1,9 @@
 #!/bin/bash
 
-git tag -d 1.2
-git push --delete origin 1.2
-git tag 1.2
-git push origin 1.2
+TAG=0.2.0
+
+git tag -d $TAG
+git push --delete origin $TAG
+git tag $TAG
+git push origin $TAG
 
