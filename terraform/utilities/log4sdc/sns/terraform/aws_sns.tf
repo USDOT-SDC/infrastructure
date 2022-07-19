@@ -1,6 +1,5 @@
 resource "aws_sns_topic" "log4sdc_error_topic" {
-  #name = "${data.aws_ssm_parameter.environment.value}-log4sdc-error-topic"
-  name = "${local.environment}-log4sdc-error-topic"
+  name = "log4sdc-error-topic"
   tags = local.global_tags
 }
 
@@ -21,8 +20,7 @@ resource "aws_sns_topic_subscription" "log4sdc_error_topic_subscription" {
 
 
 resource "aws_sns_topic" "log4sdc_critical_topic" {
-  #name = "${data.aws_ssm_parameter.environment.value}-log4sdc-critical-topic"
-  name = "${local.environment}-log4sdc-critical-topic"
+  name = "log4sdc-critical-topic"
   tags = local.global_tags
 }
 
@@ -48,8 +46,7 @@ resource "aws_sns_topic_subscription" "log4sdc_critical_topic_subscription2" {
 }
 
 resource "aws_sns_topic" "log4sdc_alert_topic" {
-  #name = "${data.aws_ssm_parameter.environment.value}-log4sdc-alert-topic"
-  name = "${local.environment}-log4sdc-alert-topic"
+  name = "log4sdc-alert-topic"
   tags = local.global_tags
 }
 

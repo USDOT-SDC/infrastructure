@@ -17,7 +17,7 @@ data "archive_file" "lambda_zip" {
 
 resource "aws_lambda_function" "log4sdc_es_publisher" {
     filename = "log4sdc-es-publisher.zip"
-    function_name = "${local.environment}-log4sdc-elasticsearch-publisher"
+    function_name = "log4sdc-elasticsearch-publisher"
     role = aws_iam_role.log4sdc_es_publisher_role.arn
     handler = "lambda-elasticsearch-publisher.lambda_handler"
     timeout = 30
@@ -34,13 +34,13 @@ resource "aws_lambda_function" "log4sdc_es_publisher" {
 }
 
 resource "aws_iam_role" "log4sdc_es_publisher_role" {
-    name = "${local.environment}-log4sdc-elasticsearch-publisher-role"
+    name = "log4sdc-elasticsearch-publisher-role"
     assume_role_policy = file("assume_role_policy.json")
     tags = local.global_tags
 }
 
 resource "aws_iam_role_policy" "log4sdc_es_publisher_policy" {
-    name="${local.environment}-log4sdc-elasticsearch-publisher-policy"
+    name="log4sdc-elasticsearch-publisher-policy"
     role = aws_iam_role.log4sdc_es_publisher_role.id
     policy = file("log4sdc_es_publisher_policy.json")
 }

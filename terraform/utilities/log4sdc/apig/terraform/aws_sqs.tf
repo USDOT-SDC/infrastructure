@@ -11,7 +11,7 @@ resource "aws_sqs_queue" "log4sdc_sqs" {
 
 resource "aws_lambda_event_source_mapping" "log4sdc_sqs_lambda" {
   event_source_arn = aws_sqs_queue.log4sdc_sqs.arn
-  function_name    = "arn:aws:lambda:${var.region}:${local.account_id}:function:${local.environment}-log4sdc-elasticsearch-publisher"
+  function_name    = "arn:aws:lambda:${var.region}:${local.account_id}:function:log4sdc-elasticsearch-publisher"
 }
 
 
