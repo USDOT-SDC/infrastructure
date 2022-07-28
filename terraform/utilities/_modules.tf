@@ -21,5 +21,6 @@ module "instance_info" {
 module "log4sdc" {
   source = "./log4sdc"
   common = var.common
+  default_tags = var.default_tags
 }
 

@@ -5,8 +5,7 @@ resource "aws_sns_topic" "log4sdc_error_topic" {
 
 resource "aws_sns_topic_policy" "log4sdc_error_topic_policy" {
   arn = aws_sns_topic.log4sdc_error_topic.arn
-  policy = templatefile("aws_sns_topic_policy_default.json", {
-      #account_number         = "${data.aws_ssm_parameter.account_number.value}",
+  policy = templatefile("utilities/log4sdc/sns/terraform/aws_sns_topic_policy_default.json", {
       account_number         = "${local.account_number}",
       topic_arn = aws_sns_topic.log4sdc_error_topic.arn
   })
@@ -26,8 +25,7 @@ resource "aws_sns_topic" "log4sdc_critical_topic" {
 
 resource "aws_sns_topic_policy" "log4sdc_critical_topic_policy" {
   arn = aws_sns_topic.log4sdc_critical_topic.arn
-  policy = templatefile("aws_sns_topic_policy_default.json", {
-      #account_number         = "${data.aws_ssm_parameter.account_number.value}",
+  policy = templatefile("utilities/log4sdc/sns/terraform/aws_sns_topic_policy_default.json", {
       account_number         = "${local.account_number}",
       topic_arn = aws_sns_topic.log4sdc_critical_topic.arn
   })
@@ -52,8 +50,7 @@ resource "aws_sns_topic" "log4sdc_alert_topic" {
 
 resource "aws_sns_topic_policy" "log4sdc_alert_topic_policy" {
   arn = aws_sns_topic.log4sdc_alert_topic.arn
-  policy = templatefile("aws_sns_topic_policy_default.json", {
-      #account_number         = "${data.aws_ssm_parameter.account_number.value}",
+  policy = templatefile("utilities/log4sdc/sns/terraform/aws_sns_topic_policy_default.json", {
       account_number         = "${local.account_number}",
       topic_arn = aws_sns_topic.log4sdc_alert_topic.arn
   })

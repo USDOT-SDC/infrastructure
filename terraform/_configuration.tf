@@ -19,7 +19,7 @@ terraform {
     }
   }
   backend "s3" {
-    // Variables can not be used here
+    # Variables can not be used here
     region = "us-east-1"
     key = "infrastructure/terraform/terraform.tfstate"
   }

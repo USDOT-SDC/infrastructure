@@ -1,11 +1,9 @@
+variable "common" {}
+variable "default_tags" {}
+
 #
 # Items with defaults
 #
-
-variable "aws_region" {
-  type    = string
-  default = "us-east-1"
-}
 
 variable "lambda_zip_path" {
   type = string
@@ -18,28 +16,17 @@ variable "log_level" {
   description = "Logging level for unified log4sdc facility"
 }
 
-variable "requests_aws4auth" {
-  type = string
-  description = "Name and version of the requests_aws4auth lambda layer for reuse"
-}
-
 #
 # locals to be provided globally
 #
 locals {
-  aws_region            = var.aws_region
-  account_number        = "${data.aws_ssm_parameter.account_number.value}"
-  environment           = "${data.aws_ssm_parameter.environment.value}"
-  requests_aws4auth     = var.requests_aws4auth
-  elasticsearch_url     = "${data.aws_ssm_parameter.elasticsearch_url.value}"
+  aws_region            = var.common.region
+  account_number        = var.common.account_id 
+  environment           = var.common.environment 
+  requests_aws4auth     = data.aws_ssm_parameter.requests_aws4auth.value
+  elasticsearch_url     = data.aws_ssm_parameter.elasticsearch_url.value
   log_level             = var.log_level
 
-  global_tags = {
-    "SourceRepo"  = "log4sdc"
-    "Project"     = "SDC-Platform"
-    "Team"        = "sdc-platform"
-    "Environment" = "${data.aws_ssm_parameter.environment.value}"
-    "Owner"       = "SDC support team"
-  }
+  global_tags = var.default_tags
 }
 

@@ -1,34 +1,14 @@
-#
-# Items with defaults
-#
-
-
-#
-# Items without defaults
-#
-variable "support_email" {
-  type    = string
-}
-
-variable "support_sms_number" {
-  type    = string
-}
-
+variable "common" {}
+variable "default_tags" {}
 
 #
 # locals to be provided globally
 #
 locals {
-  account_number        = "${data.aws_ssm_parameter.account_number.value}"
-  environment        = "${data.aws_ssm_parameter.environment.value}"
-  support_email        = var.support_email
-  support_sms_number        = var.support_sms_number
+  account_number        = var.common.account_id
+  environment        = var.common.environment
+  support_email        = var.common.admin_email
+  support_sms_number        = data.aws_ssm_parameter.support_sms_number.value
 
-  global_tags = {
-    "SourceRepo"  = "sdc-dot-cvp-metadata-ingestion"
-    "Project"     = "SDC-Platform"
-    "Team"        = "sdc-platform"
-    "Environment" = "${data.aws_ssm_parameter.environment.value}"
-    "Owner"       = "SDC support team"
-  }
+  global_tags = var.default_tags
 }

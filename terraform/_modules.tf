@@ -11,6 +11,7 @@ module "gitlab" {
 module "utilities" {
   source = "./utilities"
   common = local.common
+  default_tags = local.default_tags
 }
 
 module "web_portal" {

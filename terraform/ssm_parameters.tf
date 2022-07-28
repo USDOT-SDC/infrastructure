@@ -69,3 +69,21 @@ data "aws_ssm_parameter" "support_email" {
     aws_ssm_parameter.support_email
   ]
 }
+
+resource "aws_ssm_parameter" "admin_email" {
+  name        = "admin_email"
+  description = "The Admin Team's email"
+  type        = "String"
+  value       = " "
+  lifecycle {
+    ignore_changes = [
+      value,
+    ]
+  }
+}
+data "aws_ssm_parameter" "admin_email" {
+  name = "admin_email"
+  depends_on = [
+    aws_ssm_parameter.admin_email
+  ]
+}

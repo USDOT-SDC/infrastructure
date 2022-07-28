@@ -140,7 +140,7 @@ resource "aws_api_gateway_integration" "EnqueueIntegration" {
   integration_http_method = "POST"
   passthrough_behavior    = "NEVER"
   credentials             = aws_iam_role.api.arn
-  uri                     = "arn:aws:apigateway:${var.region}:sqs:path/${aws_sqs_queue.log4sdc_sqs.name}"
+  uri                     = "arn:aws:apigateway:${local.region}:sqs:path/${aws_sqs_queue.log4sdc_sqs.name}"
 
   request_parameters = {
     "integration.request.header.Content-Type" = "'application/x-www-form-urlencoded'"

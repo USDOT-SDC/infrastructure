@@ -11,7 +11,7 @@
 
 data "archive_file" "lambda_zip" {
     type        = "zip"
-    source_dir  = "../src"
+    source_dir  = "utilities/log4sdc/lambda-elasticsearch/src"
     output_path = "log4sdc-es-publisher.zip"
 }
 
@@ -35,14 +35,14 @@ resource "aws_lambda_function" "log4sdc_es_publisher" {
 
 resource "aws_iam_role" "log4sdc_es_publisher_role" {
     name = "log4sdc-elasticsearch-publisher-role"
-    assume_role_policy = file("assume_role_policy.json")
+    assume_role_policy = file("utilities/log4sdc/lambda-elasticsearch/terraform/assume_role_policy.json")
     tags = local.global_tags
 }
 
 resource "aws_iam_role_policy" "log4sdc_es_publisher_policy" {
     name="log4sdc-elasticsearch-publisher-policy"
     role = aws_iam_role.log4sdc_es_publisher_role.id
-    policy = file("log4sdc_es_publisher_policy.json")
+    policy = file("utilities/log4sdc/lambda-elasticsearch/terraform/log4sdc_es_publisher_policy.json")
 }
 
 

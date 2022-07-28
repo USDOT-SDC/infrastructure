@@ -1,8 +1,4 @@
-data "aws_ssm_parameter" "account_number" {
-  name = "/common/secrets/account_number"
-}
-
-data "aws_ssm_parameter" "environment" {
-  name = "/common/secrets/environment"
+data "aws_ssm_parameter" "support_sms_number" {
+  name = "/log4sdc/support_sms_number"
 }
 
