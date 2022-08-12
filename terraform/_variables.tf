@@ -10,6 +10,7 @@ locals {
       default_security_group = data.aws_security_group.default
     }
     support_email    = nonsensitive(data.aws_ssm_parameter.support_email.value)
+    admin_email    = nonsensitive(data.aws_ssm_parameter.admin_email.value)
     terraform_bucket = "${nonsensitive(data.aws_ssm_parameter.environment.value)}.sdc.dot.gov.platform.terraform"
   }
   default_tags = {
