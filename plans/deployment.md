@@ -4,10 +4,10 @@
 - Windows
 - Install or update as needed
    - AWS CLI [version 2](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
-   - Terraform [1.2.2](https://releases.hashicorp.com/terraform/1.2.2/)
-      - Updated from None
-   - hashicorp/aws [4.17.1](https://registry.terraform.io/providers/hashicorp/aws/4.17.1)
-      - Updated from None
+   - Terraform [1.2.7](https://releases.hashicorp.com/terraform/1.2.7/)
+      - Updated from 1.2.2
+   - hashicorp/aws [4.26.0](https://registry.terraform.io/providers/hashicorp/aws/4.26.0)
+      - Updated from 4.17.1
    - hashicorp/archive [2.2.0](https://registry.terraform.io/providers/hashicorp/archive/2.2.0)
       - Updated from None
    - hashicorp/local [2.2.3](https://registry.terraform.io/providers/hashicorp/local/2.2.3)
