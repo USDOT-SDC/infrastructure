@@ -42,14 +42,19 @@ Lambda layer requests_aws4auth should be present in the environment. Distributio
  
 ### Log4sdc specific team deployment
 * Set up the following SSM parameter to include desired teams:
+ ```
  /log4sdc/teams
- Json format string. Here is an example for an "acme" team. Multiple teams are accepted.
+ ```
+ 
+ Use json format for definition. Here is an example for an "acme" team. Multiple teams are accepted. Make team identifier short: it will be used as a prefix for SNS topic name.
+ ```
  {
   "acme": {
     "emails": ["email_1@acme.com", "email_2@acme.com"],
     "sms_numbers": ["+18885551212"]
   }
  }
+ ```
 
 * Change to the utilities/terraform folder
   * cd utilities/terraform
