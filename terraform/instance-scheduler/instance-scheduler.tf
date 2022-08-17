@@ -49,8 +49,8 @@ resource "aws_iam_role_policy" "instance_scheduler_policy" {
 
 resource "aws_cloudwatch_event_rule" "instance_scheduler" {
   name                = "instance_scheduler"
-  description         = "Triggers the ${aws_lambda_function.instance-scheduler} Lambda"
-  schedule_expression = "cron(0 * * * *)" # at minute 0, every hour, day of the month, month, day of the week
+  description         = "Triggers the ${aws_lambda_function.instance-scheduler.function_name} Lambda"
+  schedule_expression = "rate(1 hour)" # at minute 0, every hour, day of the month, month, day of the week
   tags = local.tags
 }
 
