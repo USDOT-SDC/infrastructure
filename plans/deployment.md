@@ -1,4 +1,4 @@
-# Version 0.1.0 Deployment Plan
+# Version 0.3.0 Deployment Plan
 
 ### Deployment Build Environment
 - Windows
@@ -35,3 +35,8 @@ Notes:
       1. If needed, run `terraform show tfplan_v{version}` to check the plan
    1. Attach `tfplan_v{version}` to the Pull Request as a comment
    1. Execute the Test Plan to ensure the deployment was successful
+
+### Individual module deployment
+#### Utilities.Log4SDC Module
+See https://github.com/USDOT-SDC/infrastructure/blob/main/plans/deployment.md
+
