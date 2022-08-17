@@ -25,12 +25,21 @@ SNS_MODULE=module.utilities.module.log4sdc.module.sns
 #terraform import ${SNS_MODULE}.aws_sns_topic.log4sdc_critical_topic arn:aws:sns:us-east-1:${AWS_ACCOUNT_NUM}:${AWS_ENVIRONMENT}-log4sdc-critical-topic 
 
 
-terraform import ${SNS_MODULE}.aws_sns_topic_subscription.log4sdc_alert_topic_subscription arn:aws:sns:us-east-1:${AWS_ACCOUNT_NUM}:${AWS_ENVIRONMENT}-log4sdc-alert-topic:${Log4sdcAlertTopicSubUid}
-terraform import ${SNS_MODULE}.aws_sns_topic_subscription.log4sdc_error_topic_subscription arn:aws:sns:us-east-1:${AWS_ACCOUNT_NUM}:${AWS_ENVIRONMENT}-log4sdc-error-topic:${Log4sdcErrorTopicSubUid}
-terraform import ${SNS_MODULE}.aws_sns_topic_subscription.log4sdc_critical_topic_subscription arn:aws:sns:us-east-1:${AWS_ACCOUNT_NUM}:${AWS_ENVIRONMENT}-log4sdc-critical-topic:${Log4sdcCriticalTopicSubUid}
-terraform import ${SNS_MODULE}.aws_sns_topic_subscription.log4sdc_critical_topic_subscription2 arn:aws:sns:us-east-1:${AWS_ACCOUNT_NUM}:${AWS_ENVIRONMENT}-log4sdc-critical-topic:${Log4sdcCriticalTopicSub2Uid}
+#terraform import ${SNS_MODULE}.aws_sns_topic_subscription.log4sdc_alert_topic_subscription arn:aws:sns:us-east-1:${AWS_ACCOUNT_NUM}:${AWS_ENVIRONMENT}-log4sdc-alert-topic:${Log4sdcAlertTopicSubUid}
+#terraform import ${SNS_MODULE}.aws_sns_topic_subscription.log4sdc_error_topic_subscription arn:aws:sns:us-east-1:${AWS_ACCOUNT_NUM}:${AWS_ENVIRONMENT}-log4sdc-error-topic:${Log4sdcErrorTopicSubUid}
+#terraform import ${SNS_MODULE}.aws_sns_topic_subscription.log4sdc_critical_topic_subscription arn:aws:sns:us-east-1:${AWS_ACCOUNT_NUM}:${AWS_ENVIRONMENT}-log4sdc-critical-topic:${Log4sdcCriticalTopicSubUid}
+#terraform import ${SNS_MODULE}.aws_sns_topic_subscription.log4sdc_critical_topic_subscription2 arn:aws:sns:us-east-1:${AWS_ACCOUNT_NUM}:${AWS_ENVIRONMENT}-log4sdc-critical-topic:${Log4sdcCriticalTopicSub2Uid}
+
+# Teams-relted import. For now: just demo account
+terraform import ${SNS_MODULE}.aws_ssm_parameter.team_log_levels[\"acme\"] /log4sdc/acme/LOG_LEVEL
+
+terraform import ${SNS_MODULE}.aws_ssm_parameter.team_topic_arn_alerts[\"acme\"] /log4sdc/acme/TOPIC_ARN_ALERT
+terraform import ${SNS_MODULE}.aws_ssm_parameter.team_topic_arn_errors[\"acme\"] /log4sdc/acme/TOPIC_ARN_ERROR
+terraform import ${SNS_MODULE}.aws_ssm_parameter.team_topic_arn_criticals[\"acme\"] /log4sdc/acme/TOPIC_ARN_CRITICAL
 
 
-
+terraform import ${SNS_MODULE}.aws_sns_topic.team_alert_topics[\"acme\"] arn:aws:sns:us-east-1:${AWS_ACCOUNT_NUM}:acme-log4sdc-alert-topic
+terraform import ${SNS_MODULE}.aws_sns_topic.team_error_topics[\"acme\"] arn:aws:sns:us-east-1:${AWS_ACCOUNT_NUM}:acme-log4sdc-error-topic
+terraform import ${SNS_MODULE}.aws_sns_topic.team_critical_topics[\"acme\"] arn:aws:sns:us-east-1:${AWS_ACCOUNT_NUM}:acme-log4sdc-critical-topic
 
 
