@@ -15,28 +15,21 @@ Lambda layer requests_aws4auth should be present in the environment. Distributio
 * Clone the log4sdc repository into a Linux environment (e.g., SDC build machine)
 * Change to the log4sdc folder
 
-### Infrastructure deployment
-* Change to the utilities/terraform folder
-  * cd utilities/terraform
-* Execute the following commands to initialize and deploy the updates:
-  * terraform init
-  * terraform apply
-
-### Log4sdc SNS Topic deployment
-* Change to the utilities/terraform folder
-  * cd utilities/terraform
+### Log4sdc SNS Topic module deployment
+* Change to the infrastructure/terraform folder
+  * cd infrastructure/terraform
 * Execute the following command to deploy the updates:
   * utilities/log4sdc/sns/reapply.sh
 
 ### Log4sdc lambda layer deployment
-* Change to the utilities/log4sdc/lambda-layer/deploy folder
-  * cd lambda-layer/deploy
+* Change to the infrastructure/log4sdc/lambda-layer/deploy folder
+  * cd infrastructure/log4sdc/lambda-layer/deploy
 * Execute the following command to deploy the lambda layer:
   * ./deploy-common-layer.sh
 
 ### ElasticSearch publisher lambda function deployment
-* Change to the utilities/terraform folder
-  * cd utilities/terraform
+* Change to the infrastructure/terraform folder
+  * cd infrastructure/terraform
 * Execute the following command to deploy the updates:
   * utilities/log4sdc/lambda-elasticsearch/reapply.sh
  
@@ -56,8 +49,8 @@ Lambda layer requests_aws4auth should be present in the environment. Distributio
  }
  ```
 
-* Change to the utilities/terraform folder
-  * cd utilities/terraform
+* Change to the infrastructure/terraform folder
+  * cd infrastructure/terraform
 * Execute the following command to deploy the updates:
   * utilities/log4sdc/sns/reapply.sh
 
