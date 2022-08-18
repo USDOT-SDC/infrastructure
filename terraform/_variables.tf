@@ -15,8 +15,11 @@ locals {
     backup_bucket    = "${nonsensitive(data.aws_ssm_parameter.environment.value)}.sdc.dot.gov.platform.backup"
   }
   default_tags = {
-    repository_url = "https://github.com/USDOT-SDC/"
-    repository     = "infrastructure"
+    "Repository URL" = "https://github.com/USDOT-SDC/"
+    Repository       = "infrastructure"
+    Project          = "SDC-Platform"
+    Team             = "SDC-Platform"
+    Owner            = "SDC Support Team"
   }
   provider-profile = "sdc"
 }
