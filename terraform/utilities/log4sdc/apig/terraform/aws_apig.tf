@@ -9,29 +9,29 @@ resource "aws_api_gateway_rest_api" "log4sdc-api" {
 
 resource "aws_api_gateway_deployment" "GatewayDeployment" {
   rest_api_id = aws_api_gateway_rest_api.log4sdc-api.id
-  variables = {
-    timestamp = timestamp()
-  }
+  # variables = {
+  #   timestamp = timestamp()
+  # }
   lifecycle {
     create_before_destroy = true
   }
-  triggers = {
-    # NOTE: The configuration below will satisfy ordering considerations,
-    #       but not pick up all future REST API changes. More advanced patterns
-    #       are possible, such as using the filesha1() function against the
-    #       Terraform configuration file(s) or removing the .id references to
-    #       calculate a hash against whole resources. Be aware that using whole
-    #       resources will show a difference after the initial implementation.
-    #       It will stabilize to only change when resources change afterwards.
-    redeployment = sha1(jsonencode([
-      aws_api_gateway_resource.HealthCheck.id,
-      aws_api_gateway_method.HealthCheckGet.id,
-      aws_api_gateway_integration.HealthCheckIntegration.id,
-      aws_api_gateway_resource.Enqueue.id,
-      aws_api_gateway_method.EnqueueMethod.id,
-      aws_api_gateway_integration.EnqueueIntegration.id,
-    ]))
-  }
+  # triggers = {
+  #   # NOTE: The configuration below will satisfy ordering considerations,
+  #   #       but not pick up all future REST API changes. More advanced patterns
+  #   #       are possible, such as using the filesha1() function against the
+  #   #       Terraform configuration file(s) or removing the .id references to
+  #   #       calculate a hash against whole resources. Be aware that using whole
+  #   #       resources will show a difference after the initial implementation.
+  #   #       It will stabilize to only change when resources change afterwards.
+  #   redeployment = sha1(jsonencode([
+  #     aws_api_gateway_resource.HealthCheck.id,
+  #     aws_api_gateway_method.HealthCheckGet.id,
+  #     aws_api_gateway_integration.HealthCheckIntegration.id,
+  #     aws_api_gateway_resource.Enqueue.id,
+  #     aws_api_gateway_method.EnqueueMethod.id,
+  #     aws_api_gateway_integration.EnqueueIntegration.id,
+  #   ]))
+  # }
 }
 
 # Health
