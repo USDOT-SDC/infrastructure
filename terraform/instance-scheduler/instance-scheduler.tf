@@ -1,8 +1,6 @@
 locals {
   tags = {
-    "Project" = "SDC-Platform"
-    "Team"    = "SDC-Platform"
-    "Owner"   = "SDC Support Team"
+    Module = "instance-scheduler"
   }
   isl_path = "${path.module}/lambdas/instance-scheduler"
 }

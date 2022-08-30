@@ -3,12 +3,7 @@ variable "default_tags" {}
 
 locals {
   local_tags = {
-    "Project"     = "SDC-Platform"
-    "Team"        = "sdc-platform"
-    "Environment" = var.common.environment
-    "Owner"       = "SDC support team"
+    Module = "utilities/log4sdc"
   }
-
-  log4sdc_tags = merge(var.default_tags, local.local_tags)
+  log4sdc_tags = local.local_tags
 }
-

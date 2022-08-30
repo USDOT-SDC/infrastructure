@@ -12,9 +12,10 @@ resource "aws_sns_topic_policy" "log4sdc_error_topic_policy" {
 }
 
 resource "aws_sns_topic_subscription" "log4sdc_error_topic_subscription" {
+  count     = length(local.support_emails)
   topic_arn = aws_sns_topic.log4sdc_error_topic.arn
   protocol  = "email"
-  endpoint  = local.support_email
+  endpoint  = local.support_emails[count.index]
 }
 
 
@@ -32,15 +33,17 @@ resource "aws_sns_topic_policy" "log4sdc_critical_topic_policy" {
 }
 
 resource "aws_sns_topic_subscription" "log4sdc_critical_topic_subscription" {
+  count     = length(local.support_emails)
   topic_arn = aws_sns_topic.log4sdc_critical_topic.arn
   protocol  = "email"
-  endpoint  = local.support_email
+  endpoint  = local.support_emails[count.index]
 }
 
 resource "aws_sns_topic_subscription" "log4sdc_critical_topic_subscription2" {
+  count     = length(local.support_sms_numbers)
   topic_arn = aws_sns_topic.log4sdc_critical_topic.arn
   protocol  = "sms"
-  endpoint  = local.support_sms_number
+  endpoint  = local.support_sms_numbers[count.index]
 }
 
 resource "aws_sns_topic" "log4sdc_alert_topic" {
@@ -57,50 +60,37 @@ resource "aws_sns_topic_policy" "log4sdc_alert_topic_policy" {
 }
 
 resource "aws_sns_topic_subscription" "log4sdc_alert_topic_subscription" {
+  count     = length(local.support_emails)
   topic_arn = aws_sns_topic.log4sdc_alert_topic.arn
   protocol  = "email"
-  endpoint  = local.support_email
+  endpoint  = local.support_emails[count.index]
 }
 
 resource "aws_ssm_parameter" "topic_arn_error" {
   name  = "/log4sdc/TOPIC_ARN_ERROR"
   type  = "String"
   value = aws_sns_topic.log4sdc_error_topic.arn
+  tags = local.global_tags
 }
 
 resource "aws_ssm_parameter" "topic_arn_critical" {
   name  = "/log4sdc/TOPIC_ARN_CRITICAL"
   type  = "String"
   value = aws_sns_topic.log4sdc_critical_topic.arn
+  tags = local.global_tags
 }
 
 resource "aws_ssm_parameter" "topic_arn_alert" {
   name  = "/log4sdc/TOPIC_ARN_ALERT"
   type  = "String"
   value = aws_sns_topic.log4sdc_alert_topic.arn
+  tags = local.global_tags
 }
 
 resource "aws_ssm_parameter" "log_level" {
   name  = "/log4sdc/LOG_LEVEL"
   type  = "String"
   value = "INFO"
+  tags = local.global_tags
 }
-
-
-# subscriptions and permissions - to go into lambda TFs
-#
-#resource "aws_sns_topic_subscription" "dot_sdc_metadata_ingestion_filter_lambda_subscription" {
-#  topic_arn = aws_sns_topic.dot_sdc_raw_submissions_topic.arn
-#  protocol  = "lambda"
-#  endpoint  = aws_lambda_function.MetadataIngestionFilterLambda.arn
-#}
-#
-#resource "aws_lambda_permission" "trigger_MetadataIngestionFilterLambda_with_sns" {
-#    statement_id = "AllowExecutionFromSNS"
-#    action = "lambda:InvokeFunction"
-#    function_name = aws_lambda_function.MetadataIngestionFilterLambda.arn
-#    principal = "sns.amazonaws.com"
-#    source_arn = aws_sns_topic.dot_sdc_raw_submissions_topic.arn
-#}
-
 

@@ -15,25 +15,45 @@ Lambda layer requests_aws4auth should be present in the environment. Distributio
 * Clone the log4sdc repository into a Linux environment (e.g., SDC build machine)
 * Change to the log4sdc folder
 
-### SNS Topic deployment
-* Change to the sns/terraform folder
-  * cd sns/terraform
-* Execute the following commands to deploy the updates:
-  * terraform init -var-file=config/backend-ecs-prod.tfvars
-  * terraform apply -var-file=config/ecs-prod.tfvars
+### Log4sdc SNS Topic module deployment
+* Change to the infrastructure/terraform folder
+  * cd infrastructure/terraform
+* Execute the following command to deploy the updates:
+  * utilities/log4sdc/sns/reapply.sh
 
 ### Log4sdc lambda layer deployment
-* Change to the lambda-layer/deploy folder
-  * cd lambda-layer/deploy
+* Change to the infrastructure/log4sdc/lambda-layer/deploy folder
+  * cd infrastructure/log4sdc/lambda-layer/deploy
 * Execute the following command to deploy the lambda layer:
   * ./deploy-common-layer.sh
 
 ### ElasticSearch publisher lambda function deployment
-* Change to the lambda-elasticsearch/terraform folder
-  * cd lambda-elasticsearch/terraform
-* Execute the following commands to deploy the updates:
-  * terraform init -var-file=config/backend-ecs-prod.tfvars
-  * terraform apply -var-file=config/ecs-prod.tfvars
+* Change to the infrastructure/terraform folder
+  * cd infrastructure/terraform
+* Execute the following command to deploy the updates:
+  * utilities/log4sdc/lambda-elasticsearch/reapply.sh
+ 
+### Log4sdc specific team deployment
+* Set up the following SSM parameter to include desired teams:
+ ```
+ /log4sdc/teams
+ ```
+ 
+ Use json format for definition. Here is an example for an "acme" team. Multiple teams are accepted. Make team identifier short: it will be used as a prefix for SNS topic name.
+ ```
+ {
+  "acme": {
+    "emails": ["email_1@acme.com", "email_2@acme.com"],
+    "sms_numbers": ["+18885551212"]
+  }
+ }
+ ```
+
+* Change to the infrastructure/terraform folder
+  * cd infrastructure/terraform
+* Execute the following command to deploy the updates:
+  * utilities/log4sdc/sns/reapply.sh
+
 
 ### ElasticSearch index and index pattern deployment
 * Log on into AWS console
