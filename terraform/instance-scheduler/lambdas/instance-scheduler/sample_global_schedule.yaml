@@ -1,0 +1,25 @@
+Timezone : US/Eastern
+Tags:
+    Role:
+        Researcher-Workstation:
+            - Day: daily
+              Time: "23:00"
+              Duration: "00:00"
+        Support-Workstation:
+            - Day: daily
+              Time: "22:00"
+              Duration: "00:00"
+    Team:
+        "RT: Acme Research Team":
+            - Day: daily
+              Time: "21:00"
+              Duration: "00:00"
+    Name:
+        ECSDWBTS01:
+            - Day: daily
+              Time: "20:00"
+              Duration: "00:00"
+        ECSDWABC01:
+            - Day: daily
+              Time: "19:00"
+              Duration: "00:00"

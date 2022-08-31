@@ -1,0 +1,15 @@
+Workstation: ECSPWABC01
+Timezone: US/Eastern
+Schedules:
+  - Day: Daily # Daily, ISO Date, Sunday-Saturday or Day of month (-1 for last day of the month)
+    Time: "10:00" # 24 hour clock
+    Duration: "3:00" # 0-24 hours
+  - Day: "2022-09-01"
+    Time: "09:00"
+    Duration: "12:00"
+  - Day: Monday
+    Time: "03:00"
+    Duration: "1:00"
+  - Day: -1
+    Time: "07:00"
+    Duration: "12:00"
