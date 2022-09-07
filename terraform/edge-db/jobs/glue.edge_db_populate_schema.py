@@ -43,12 +43,9 @@ run_properties = get_workflow_params(args)
 print(f'Run Properties: {run_properties}')
 S3KeyHash = get_runtime_param(run_properties, "S3KeyHash")
 RequestedBy_Epoch = get_runtime_param(run_properties,"RequestedByEpoch")
-
-# Glue data catalog changes '.' and '-' to '_'. The following ensures any '.' or '-' get replaced with '_'
 databaseName = get_runtime_param(run_properties,"databaseName").replace('-', '_').replace('.', '_')
 tableName = get_runtime_param(run_properties,"tableName").replace('-', '_').replace('.', '_')
 internalSchema = get_runtime_param(run_properties,"internalSchema").replace('-', '_').replace('.', '_')
-
 listOfPOC = get_runtime_param(run_properties,"listOfPOC").split(",")
 userID = get_runtime_param(run_properties,"userID")
 userEmail = get_runtime_param(run_properties,"userEmail").split(",")
@@ -117,9 +114,6 @@ except:
     
 try:    
     schema = datasource0._jdf.schema().treeString()
-    schema = schema.replace("|--","<br>&nbsp;&nbsp;")
-    schema = schema.replace("root","")
-    schema = "\n" + schema
     df_source = datasource0.toDF()
     
     '''
@@ -144,6 +138,10 @@ try:
     Email Generation
     =====================================================================================================================================
     '''
+    schema = schema.replace("|--","<br>&nbsp;&nbsp;")
+    schema = schema.replace("root","")
+    schema = "\n" + schema
+
     sample_data_df = df_source.sample(False, 0.1, seed=0).limit(5)
     sample_data_list = df_source.rdd.flatMap(lambda x:str(x)).collect()
     sample_data_string = ''.join(sample_data_list)
