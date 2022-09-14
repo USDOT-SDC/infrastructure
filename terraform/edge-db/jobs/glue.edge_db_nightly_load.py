@@ -16,7 +16,10 @@ from boto3.dynamodb.conditions import Attr, Key
 from pyspark.sql.types import *
 from pyspark.sql.functions import mean as _mean, stddev as _stddev, col, length as length
 from pyspark.sql import *
+# from pyspark import SQLContext
 
+
+# dynamodb_resource = boto3.resource('dynamodb')
 args = getResolvedOptions(sys.argv, ["JOB_NAME"])
 # Set Spark Configurations
 sc = SparkContext()
@@ -26,8 +29,7 @@ spark = glueContext.spark_session
 job = Job(glueContext)
 job.init(args["JOB_NAME"], args)
 dynamodb = boto3.resource('dynamodb')
-
-
+# sqlContext = SQLContext(spark.sparkContext, spark)
 '''
 =============================================================================================================================
 Function Declarations
@@ -62,7 +64,6 @@ def scan_db(table, scan_kwargs=None):
 
         complete = True if next_key is None else False
     return records
-
 
 def detect_schema_change(string1, string2):
     '''
@@ -119,8 +120,7 @@ def detect_schema_change(string1, string2):
             else:
                 return False #Return False if key doesn't exist in both schemas.
         return True
-
-
+        
 def qa_function(dyf_source, tableName, targetDBSchema, databaseName, stdDev_threshold=3):
     """
     Overview:
@@ -141,56 +141,66 @@ def qa_function(dyf_source, tableName, targetDBSchema, databaseName, stdDev_thre
     # DEBUG/Testing Lines Below:
     # example_data = [('Bob', 'Smith', 1, 5.5),('Tom','Caesar',20, 20.6),('Steve','Patel',15, 43.66),('Moe','Shmo',14,37.44),('Justin','Fox', 5, 20.5), ('Kyle','Smith', 10, 26.7)] 
     # df_old = spark.createDataFrame(example_data, ['first_name','last_name','intCol', 'floatCol'])
+    try:
+        dyf_target = glueContext.create_dynamic_frame.from_catalog(database = "dev.sdc.dot.gov.research-team.data-export.edge", table_name = databaseName + "_" + targetDBSchema + "_" + tableName, transformation_ctx = "dyf_target")
+        df_old = dyf_target.toDF()
+    
+    # df_old = sqlContext.read.format("jdbc").option("url", f"jdbc:postgresql://aurora-dataexport-edge-instance-1.cbldpsthn7bv.us-east-1.rds.amazonaws.com:5432/" + databaseName) \
+    # .option("dbtable", targetDBSchema+'.'+tableName) \
+    # .option("user", "sdc_admin") \
+    # .option("password", "password") \
+    # .load()
+        column_list = [] #Only compare columns that exist in both the internal and edge table.
+        for column in df_source.columns:
+            if column in df_old.columns:
+                column_list.append(column)
+        for column in column_list:
+            if str(df_old.schema[column].dataType) == 'StringType':
+                temp_column_name = column+'_tokenized' 
+                tempDF_old = df_old.withColumn(temp_column_name, length(column))
+                df_stats = tempDF_old.select(
+                    _mean(col(temp_column_name)).alias('mean'),
+                    _stddev(col(temp_column_name)).alias('std')
+                ).collect()
+                
+                mean = df_stats[0]['mean']
+                std = df_stats[0]['std']
+                lowerBound = mean - (std*stdDev_threshold)
+                upperBound = mean + (std*stdDev_threshold)
+                
+                tempDF_new = df_source.withColumn(temp_column_name, length(column))
+            
+                outlierDF = tempDF_new.filter((tempDF_new[temp_column_name] < lowerBound) | (tempDF_new[temp_column_name] > upperBound))
+                outlier_list = outlierDF.select(column).rdd.map(lambda x : x[0]).collect()
+                if not outlier_detection:
+                    outlier_detection = True if outlier_list else False
+                if outlier_list:
+                    outlier_values[column]= outlier_list
+                
+            elif str(df_old.schema[column].dataType) in ['IntegerType','FloatType','LongType','DoubleType','ShortType']:
+                df_stats = df_old.select(
+                    _mean(col(column)).alias('mean'),
+                    _stddev(col(column)).alias('std')
+                ).collect()
+                
+                mean = df_stats[0]['mean']
+                std = df_stats[0]['std']
+                lowerBound = mean - (std*3)
+                upperBound = mean + (std*3)
+                
+                outlierDF = df_source.filter((df_source[column] < lowerBound) | (df_source[column] > upperBound))
+                outlier_list = outlierDF.select(column).rdd.map(lambda x : x[0]).collect()
+                if not outlier_detection:
+                    outlier_detection = True if outlier_list else False
+                if outlier_list:
+                    outlier_values[column]= outlier_list
+            else:
+                continue
+        return outlier_detection, outlier_values
+    except Exception as e:
+        print("Unable to determine target outlier values. Function failed with: ", e)
+        return outlier_detection, outlier_values
 
-    dyf_target = glueContext.create_dynamic_frame.from_catalog(database = "dev.sdc.dot.gov.research-team.data-export.edge", table_name = databaseName + "_" + targetDBSchema + "_" + tableName, transformation_ctx = "dyf_target")
-    df_old = dyf_target.toDF()
-
-    column_list = df_source.columns
-    for column in column_list:
-        if str(df_old.schema[column].dataType) == 'StringType':
-            temp_column_name = column+'_tokenized' 
-            tempDF_old = df_old.withColumn(temp_column_name, length(column))
-            df_stats = tempDF_old.select(
-                _mean(col(temp_column_name)).alias('mean'),
-                _stddev(col(temp_column_name)).alias('std')
-            ).collect()
-            
-            mean = df_stats[0]['mean']
-            std = df_stats[0]['std']
-            lowerBound = mean - (std*stdDev_threshold)
-            upperBound = mean + (std*stdDev_threshold)
-            
-            tempDF_new = df_source.withColumn(temp_column_name, length(column))
-        
-            outlierDF = tempDF_new.filter((tempDF_new[temp_column_name] < lowerBound) | (tempDF_new[temp_column_name] > upperBound))
-            outlier_list = outlierDF.select(column).rdd.map(lambda x : x[0]).collect()
-            if not outlier_detection:
-                outlier_detection = True if outlier_list else False
-            if outlier_list:
-                outlier_values[column]= outlier_list
-            
-        elif str(df_old.schema[column].dataType) in ['IntegerType','FloatType','LongType','DoubleType','ShortType']:
-            df_stats = df_old.select(
-                _mean(col(column)).alias('mean'),
-                _stddev(col(column)).alias('std')
-            ).collect()
-            
-            mean = df_stats[0]['mean']
-            std = df_stats[0]['std']
-            lowerBound = mean - (std*3)
-            upperBound = mean + (std*3)
-            
-            outlierDF = df_source.filter((df_source[column] < lowerBound) | (df_source[column] > upperBound))
-            outlier_list = outlierDF.select(column).rdd.map(lambda x : x[0]).collect()
-            if not outlier_detection:
-                outlier_detection = True if outlier_list else False
-            if outlier_list:
-                outlier_values[column]= outlier_list
-        else:
-            continue
-    return outlier_detection, outlier_values
-
-        
 def send_notification(listOfRecipients, emailContent, subject = 'Export Notification: Schema Change Rejection'):
     """
     Overview:
@@ -235,7 +245,6 @@ def send_notification(listOfRecipients, emailContent, subject = 'Export Notifica
     except Exception as e:
         print(e)
 
-
 '''
 =============================================================================================================================
 Main Script
@@ -243,10 +252,20 @@ Main Script
 '''
 
 ''' -------------- DynamoDB Section --------------'''
+
 kwargs = {
         'FilterExpression': Attr('RequestType').eq('Table') & Attr('RequestReviewStatus').eq('Approved') # Filter Expression for DynamoDB Scan. Get entries where status = 'approved'
     }
-requests = scan_db('dev-RequestExportTable', kwargs) #Execute filter expression, defined in 'kwargs', on DynamoDB table 'dev-RequestExportTable'.
+requests_all_approved = scan_db('dev-RequestExportTable', kwargs) #Execute filter expression, defined in 'kwargs', on DynamoDB table 'dev-RequestExportTable'.
+
+requests = [] #List of all approved requests with duplicates removed.
+s3_key_hash_set = set()
+for request in requests_all_approved: #Remove approved requests for same table (duplicate requests).
+    init_set_len = len(s3_key_hash_set)
+    s3_key_hash_set.add(request['S3KeyHash'])
+    if len(s3_key_hash_set) > init_set_len: #If s3keyhash of request was unique.
+        requests.append(request)
+        
 print("Approved Export Requests: \n", requests) #Print Approved Export Requets in logs to show what entries have been looked at.
 
 # 1. check schema against schema attribute
@@ -256,8 +275,8 @@ for request in requests:
     tableName_glue = str(request["TableName"]).replace('-', '_').replace('.', '_').strip() #'.' and '-' characters have been replaced with '_' to comply with Glue Catalog needs.
     sourceSchema_glue = str(request["SourceDatabaseSchema"]).replace('-', '_').replace('.', '_').strip()  #'.' and '-' characters have been replaced with '_' to comply with Glue Catalog needs.
     targetSchema_glue = str(request["TargetDatabaseSchema"]).replace('-', '_').replace('.', '_').strip()  #'.' and '-' characters have been replaced with '_' to comply with Glue Catalog needs.
-    sourceSchema = str(request["SourceDatabaseSchema"]).strip()  #Used for direct JDBC connections (no glue catalog)
-    targetSchema = str(request["TargetDatabaseSchema"]).strip()  #Used for direct JDBC connections (no glue catalog)
+    sourceSchema = str(request["SourceDatabaseSchema"]).strip()  #'.' and '-' characters have been replaced with '_' to comply with Glue Catalog needs.
+    targetSchema = str(request["TargetDatabaseSchema"]).strip()  #'.' and '-' characters have been replaced with '_' to comply with Glue Catalog needs.
     databaseName_glue = str(request["DatabaseName"]).replace('-', '_').replace('.', '_').strip()  #'.' and '-' characters have been replaced with '_' to comply with Glue Catalog needs.
     databaseName = str(request["DatabaseName"])
     userEmail = str(request["UserEmail"]).strip()
@@ -292,12 +311,7 @@ for request in requests:
         )
 
     else:
-        try:
-            outlier_flag, outlier_values = qa_function(datasource0, tableName_glue, targetSchema_glue, databaseName_glue)
-        except Exception as e:
-            print("Unable to determine target outlier values. Function failed with: ", e)
-            outlier_flag = False
-            pass
+        outlier_flag, outlier_values = qa_function(datasource0, tableName_glue, targetSchema_glue, databaseName_glue)
         if outlier_flag:         
             #Send an email to approvers of outlier values detected. QA Email.
             email_recipients = [listOfPOC]
@@ -306,20 +320,20 @@ for request in requests:
             send_notification(email_recipients,emailContent, emailSubject)
             print(outlier_values)
         
-    # write internal table dynamic frame to EdgeDB (overwrite edge clone table with new data). Overwrites table to handle any existing entries that were modified.
-    dbtable = targetSchema + "." + tableName
-    # datasink1 = glueContext.write_dynamic_frame.from_jdbc_conf(frame = datasource0, catalog_connection = "Data Export Edge Acme DB", connection_options = {"dbtable": dbtable, "database": databaseName}, transformation_ctx = "datasink1")
-
-    jdbcDF = datasource0.toDF()
-    print(f'Dataframe to be written {jdbcDF.head()}')
-    #JDBC Connection to EdgeDB
-    #TODO: Get Admin Credentials into SSM Parameter Store.
-    x = jdbcDF.write.format("jdbc") \
-    .option("url", f"jdbc:postgresql://aurora-dataexport-edge-instance-1.cbldpsthn7bv.us-east-1.rds.amazonaws.com:5432/" + databaseName) \
-    .option("dbtable", dbtable) \
-    .option("user", "sdc_admin") \
-    .option("password", "password") \
-    .mode("overwrite").option("truncate", "true") \
-    .save()
+        # write internal table dynamic frame to EdgeDB (overwrite edge clone table with new data). Overwrites table to handle any existing entries that were modified.
+        dbtable = targetSchema + "." + tableName
+        # datasink1 = glueContext.write_dynamic_frame.from_jdbc_conf(frame = datasource0, catalog_connection = "Data Export Edge Acme DB", connection_options = {"dbtable": dbtable, "database": databaseName}, transformation_ctx = "datasink1")
+    
+        jdbcDF = datasource0.toDF()
+        print(f'Dataframe to be written {jdbcDF.head()}')
+        #JDBC Connection to EdgeDB
+        #TODO: Get Admin Credentials into SSM Parameter Store.
+        x = jdbcDF.write.format("jdbc") \
+        .option("url", f"jdbc:postgresql://aurora-dataexport-edge-instance-1.cbldpsthn7bv.us-east-1.rds.amazonaws.com:5432/" + databaseName) \
+        .option("dbtable", dbtable) \
+        .option("user", "sdc_admin") \
+        .option("password", "password") \
+        .mode("overwrite") \
+        .save() 
 
 job.commit()
