@@ -14,7 +14,7 @@ resource "aws_api_gateway_rest_api_policy" "webportal" {
   policy = file("${local.module}/policies/api-gateway_policy.json")
   lifecycle {
     ignore_changes = [
-      value,
+      policy
     ]
   }
 }
@@ -25,7 +25,7 @@ resource "aws_api_gateway_resource" "exportTable" {
   path_part   = "exportTable"
   lifecycle {
     ignore_changes = [
-      value,
+      path_part
     ]
   }
 }
@@ -37,7 +37,7 @@ resource "aws_api_gateway_method" "exportTable_OPTIONS" {
     authorization = "NONE"
     lifecycle {
     ignore_changes = [
-      value,
+      http_method
     ]
   }
 }
@@ -60,10 +60,10 @@ resource "aws_api_gateway_method_response" "options_method_response_200" {
     }
     lifecycle {
     ignore_changes = [
-      value,
+      response_parameters
     ]
     }
-  depends_on = ["aws_api_gateway_method.exportTable_OPTIONS"]
+  # depends_on = [aws_api_gateway_method.exportTable_OPTIONS]
 }
 
 resource "aws_api_gateway_integration" "options_integration_request" {
@@ -73,10 +73,10 @@ resource "aws_api_gateway_integration" "options_integration_request" {
     type          = "MOCK"
   lifecycle {
     ignore_changes = [
-      value,
+      type
     ]
   }
-    depends_on = ["aws_api_gateway_method.exportTable_OPTIONS"]
+    # depends_on = [aws_api_gateway_method.exportTable_OPTIONS]
 }
 
 resource "aws_api_gateway_integration_response" "options_integration_response" {
@@ -94,10 +94,10 @@ resource "aws_api_gateway_integration_response" "options_integration_response" {
     }
   lifecycle {
     ignore_changes = [
-      value,
+      response_parameters
     ]
   }
-    depends_on = ["aws_api_gateway_method_response.options_200"]
+    # depends_on = [aws_api_gateway_method_response.options_200]
 }
 
 resource "aws_api_gateway_method" "exportTable_POST" {
@@ -111,7 +111,7 @@ resource "aws_api_gateway_method" "exportTable_POST" {
   }
   lifecycle {
     ignore_changes = [
-      value,
+      request_parameters
     ]
   }
 }
@@ -125,7 +125,7 @@ resource "aws_api_gateway_integration" "integration" {
   uri                     = aws_lambda_function.webportal.invoke_arn
   lifecycle {
     ignore_changes = [
-      value,
+      integration_http_method
     ]
   }
 }
