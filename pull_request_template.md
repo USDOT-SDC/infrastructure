@@ -188,35 +188,6 @@ Code should include comments for clarity when appropriate but should also be sel
 names to help indicate when the function or variable is being used for. Comments above a function that explain the inputs and outputs are useful but not necessary for 
 code that has a good function name and can be understood by a junior developer.
 
-- [ ] **Logging and Debuggability**  
-Code should have an appropriate amount of logging to be able to troubleshoot foreseeable problems. This might include logging the major inputs at function entry and 
-outputs at function exit, as well as at major decision points within this function. Be wary of having too much logging, especially within loops that may iterate hundreds 
-or thousands of times. A good compromise is to have normal logging and then provide a debug switch as an environment variable to enable for detailed logging. The psuedocode 
-would look like: 
-  ```python
-  total = 0
-  print (“Entered logging; input “ + inputVariable)
-  
-  for (int i = 0; i < deposits.size(); i++)
-       if (debugLog == true)
-           print(“Added deposit of  => “ + deposits[i]
-      total = total + deposit[i]
-  
-  print (“Exiting with total amount => “ + total)
-  ```
-
-- [ ] **Testability**  
-When reviewing code, ask the question of how it can be unit tested (ideally using automation). This means that external dependencies should be minimized and can be stubbed/faked 
-when necessary.   Utilizing interfaces when interacting between layers will help with this.
-
-- [ ] **Input Validation**  
-Are inputs to the program provided by a trusted source? If not, are inputs validated and sanitized before they are used in the program?
-
-- [ ] **Error Handling**  
-Exceptions should be logged unless they are an expected, valid use case. Exceptions should NOT be swallowed unless they are recoverable and/or it is critical to business 
-operations that processing continue (e.g. you are processing a batch of records and 1 fails but the business needs require that we attempt to process the remainder of the batch). 
-Resources such as open files and database connections should be freed in a finally block so that they are cleaned regardless of successful completion.
-
 - [ ] **Security**  
 Are secrets being utilized in the code? If so, are they handled properly and not logged to output or exposed. If necessary, is appropriate authentication in place for the code 
 to be invoked? Is input data from non-trusted sources appropriately validated and/or sanitized?  
@@ -234,17 +205,10 @@ Check for the following:
 - All Waze Researchers
 - Acme Data Provider
 
-## Security Review Needed (DOT)
+## Security Impact Analysis (SIA)
 > __Instructions__
-> - Does the change meet any of the following criteria?
-> - Approval of privileged user accounts
-> - Any changes to how encryption is used/implemented.  
-> - Change in setting of a configuration controlled Configuration Item (CI) to include:
-> - Gold disk/template for new instances, ports, protocols, firewall, network ACL rules, security groups, etc.
-> - Change of Roles, Policies, or Groups
-> - Change in auditing setting
-> - Change of architecture – boundary devices, interconnections
-> - Change to anything related to information with PII
+> - Review [WI: Performing a Security Impact Analysis (SIA)](https://securedatacommons.atlassian.net/wiki/spaces/DO/pages/2642935856) to determine if a SIA is required
+> - If required, copy/paste the SIA template into the CRB here
 - No
 
 ## Meets Definition of Ready?
