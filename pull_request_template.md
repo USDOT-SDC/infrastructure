@@ -109,11 +109,6 @@ SDC Support Team
 - User Guide Chapter
 
 ## Process, Procedure and Work Instruction
-> __Instructions__
-> - Provide details on what Processes, Procedures and Work Instructions have been created, updated or used, include a link
-> - Pull Requests without links to the applicable Processes, Procedures or Work Instructions will not be moved to In Approval status
-
-For example:
 - [Process: Development](https://securedatacommons.atlassian.net/wiki/spaces/DO/pages/1332379871)
   - [Procedure: Infrastructure](https://securedatacommons.atlassian.net/wiki/spaces/DO/pages/2437218305)
     - [WI: Infrastructure, Infrastructure Deployment](https://securedatacommons.atlassian.net/wiki/spaces/DO/pages/2501017629)
