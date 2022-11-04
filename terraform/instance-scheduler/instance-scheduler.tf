@@ -27,7 +27,7 @@ resource "aws_lambda_function" "instance_scheduler" {
   depends_on       = [null_resource.run-deploy]
   timeout          = "300"
   vpc_config {
-    subnet_ids         = var.common.network.subnets.ids
+    subnet_ids         = var.common.network.subnets
     security_group_ids = [var.common.network.default_security_group.id]
   }
   tags = local.tags

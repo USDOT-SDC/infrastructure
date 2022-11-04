@@ -5,8 +5,21 @@ locals {
     region      = nonsensitive(data.aws_ssm_parameter.region.value)
     environment = nonsensitive(data.aws_ssm_parameter.environment.value)
     network = {
-      vpc                    = data.aws_vpc.public
-      subnets                = data.aws_subnets.public
+      vpc = data.aws_vpc.public
+      subnets = [
+        data.aws_subnet.support.id,
+        data.aws_subnet.researcher.id,
+        data.aws_subnet.three.id,
+        data.aws_subnet.four.id,
+        data.aws_subnet.five.id,
+        data.aws_subnet.six.id,
+      ]
+      subnet_support         = data.aws_subnet.support
+      subnet_researcher      = data.aws_subnet.researcher
+      subnet_three           = data.aws_subnet.three
+      subnet_four            = data.aws_subnet.four
+      subnet_five            = data.aws_subnet.five
+      subnet_six             = data.aws_subnet.six
       default_security_group = data.aws_security_group.default
     }
     support_email    = nonsensitive(data.aws_ssm_parameter.support_email.value)
