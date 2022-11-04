@@ -35,7 +35,9 @@ def get_global_schedule():
     ssm = boto3.client("ssm", region_name=region_name)
     ec2 = boto3.client("ec2", region_name=region_name)
     # get the global schedule from parameter store
+    print("get_parameter('Global-Schedule')...")
     ssm_parameter = ssm.get_parameter(Name="/Instance-Scheduler/Global-Schedule", WithDecryption=False)
+    print("get_parameter('Global-Schedule')...Done")
     yaml_sch = yaml.safe_load(ssm_parameter["Parameter"]["Value"])
     if "Timezone" in yaml_sch and "Tags" in yaml_sch:
         tz = yaml_sch["Timezone"]
