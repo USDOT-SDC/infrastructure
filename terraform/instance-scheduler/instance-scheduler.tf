@@ -8,7 +8,7 @@ locals {
 # === Build the Lambda deployment package ===
 resource "null_resource" "run-deploy" {
   triggers = {
-    timestamp = timestamp()
+    timestamp = "2022-12-01T03:14" # update to force a rebuild of the deployment package, or use timestamp()
   }
   provisioner "local-exec" {
     command     = "python instance-scheduler/lambdas/instance-scheduler/deploy.py"
