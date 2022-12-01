@@ -21,6 +21,7 @@ locals {
       subnet_five            = data.aws_subnet.five
       subnet_six             = data.aws_subnet.six
       default_security_group = data.aws_security_group.default
+      transit_gateway        = data.aws_ec2_transit_gateway.default
     }
     support_email    = nonsensitive(data.aws_ssm_parameter.support_email.value)
     admin_email      = nonsensitive(data.aws_ssm_parameter.admin_email.value)
