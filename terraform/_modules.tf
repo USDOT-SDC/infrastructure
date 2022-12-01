@@ -1,3 +1,8 @@
+module "vpc" {
+  source = "./vpc"
+  common = local.common
+}
+
 module "instance-scheduler" {
   source = "./instance-scheduler"
   common = local.common
