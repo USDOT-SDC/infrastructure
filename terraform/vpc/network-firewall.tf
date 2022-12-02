@@ -126,3 +126,36 @@ resource "aws_networkfirewall_rule_group" "alpha_stateless_ingress" {
     }
   }
 }
+
+locals {
+  EXTERNAL_NET_ip_set_definition = "![${join(", ", var.common.network.vpc.cidr_block_associations[*].cidr_block)}]"
+}
+
+resource "aws_networkfirewall_rule_group" "alpha_stateful_egress" {
+  name        = "Firewall-Alpha-Stateful-Suricata-RuleGroup"
+  description = "Advanced rules using Suricata rule syntax"
+  type        = "STATEFUL"
+  capacity    = 2500
+  rule_group {
+    stateful_rule_options {
+      rule_order = "STRICT_ORDER"
+    }
+    rule_variables {
+      ip_sets {
+        key = "HOME_NET"
+        ip_set {
+          definition = [aws_subnet.researcher.cidr_block]
+        }
+      }
+      ip_sets {
+        key = "EXTERNAL_NET"
+        ip_set {
+          definition = [local.EXTERNAL_NET_ip_set_definition]
+        }
+      }
+    }
+    rules_source {
+      rules_string = file("vpc/network-firewall-suricata.rules")
+    }
+  }
+}
