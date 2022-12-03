@@ -159,3 +159,42 @@ resource "aws_networkfirewall_rule_group" "alpha_stateful_egress" {
     }
   }
 }
+
+resource "aws_networkfirewall_rule_group" "alpha_stateful_tuple_egress" {
+  name        = "Firewall-Alpha-Stateful-5-Tuple-RuleGroup"
+  description = "5-tuple format, specifying the source IP, source port, destination IP, destination port, and protocol"
+  type        = "STATEFUL"
+  capacity    = 1000
+  rule_group {
+    rules_source {
+      stateful_rule {
+        action = "PASS"
+        header {
+          destination      = "8.8.8.8/32"
+          destination_port = "ANY"
+          direction        = "FORWARD"
+          protocol         = "DNS"
+          source           = "0.0.0.0/0"
+          source_port      = "ANY"
+        }
+        rule_option {
+          keyword = "sid:1"
+        }
+      }
+      stateful_rule {
+        action = "PASS"
+        header {
+          destination      = "0.0.0.0/0"
+          destination_port = "ANY"
+          direction        = "FORWARD"
+          protocol         = "DNS"
+          source           = "8.8.8.8/32"
+          source_port      = "ANY"
+        }
+        rule_option {
+          keyword = "sid:2"
+        }
+      }
+    }
+  }
+}
