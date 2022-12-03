@@ -1,3 +1,3 @@
-# output "debug" {
-#     value = module.vpc.debug
-# }
+output "vpc_debug" {
+    value = module.vpc.debug
+}

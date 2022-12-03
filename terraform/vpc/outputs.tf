@@ -18,7 +18,8 @@ output "subnets_infrastructure" {
   value = aws_subnet.infrastructure
 }
 
-# output "debug" {
-#   # value = local.EXTERNAL_NET_ip_set_definition
-#   value = var.common.network.vpc.cidr_block_associations[*].cidr_block
-# }
+output "debug" {
+  value = "debug"
+  # value = (aws_networkfirewall_firewall.alpha.firewall_status[0].sync_states[*].attachment[0].endpoint_id)
+  #.sync_states[0]
+}
