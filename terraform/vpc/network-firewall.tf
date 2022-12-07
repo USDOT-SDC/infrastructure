@@ -40,6 +40,25 @@ resource "aws_networkfirewall_rule_group" "alpha_stateless_ingress" {
           rule_definition {
             actions = ["aws:pass"]
             match_attributes {
+              protocols = [6, 17]
+              destination { address_definition = "169.254.169.254/32" }
+              destination_port {
+                from_port = 0
+                to_port   = 65535
+              }
+              source { address_definition = aws_subnet.researcher.cidr_block }
+              source_port {
+                from_port = 0
+                to_port   = 65535
+              }
+            }
+          }
+        }
+        stateless_rule {
+          priority = 2
+          rule_definition {
+            actions = ["aws:pass"]
+            match_attributes {
               source { address_definition = "0.0.0.0/0" }
               destination { address_definition = "0.0.0.0/0" }
               protocols = [1]
@@ -47,7 +66,7 @@ resource "aws_networkfirewall_rule_group" "alpha_stateless_ingress" {
           }
         }
         stateless_rule {
-          priority = 2
+          priority = 3
           rule_definition {
             actions = ["aws:pass"]
             match_attributes {
@@ -66,7 +85,7 @@ resource "aws_networkfirewall_rule_group" "alpha_stateless_ingress" {
           }
         }
         stateless_rule {
-          priority = 3
+          priority = 4
           rule_definition {
             actions = ["aws:pass"]
             match_attributes {
@@ -85,7 +104,7 @@ resource "aws_networkfirewall_rule_group" "alpha_stateless_ingress" {
           }
         }
         stateless_rule {
-          priority = 4
+          priority = 5
           rule_definition {
             actions = ["aws:pass", ]
             match_attributes {
@@ -104,7 +123,7 @@ resource "aws_networkfirewall_rule_group" "alpha_stateless_ingress" {
           }
         }
         stateless_rule {
-          priority = 5
+          priority = 6
           rule_definition {
             actions = ["aws:pass"]
             match_attributes {
@@ -126,6 +145,8 @@ resource "aws_networkfirewall_rule_group" "alpha_stateless_ingress" {
     }
   }
 }
+
+# 169.254.169.254
 
 locals {
   EXTERNAL_NET_ip_set_definition = "![${join(", ", var.common.network.vpc.cidr_block_associations[*].cidr_block)}]"
