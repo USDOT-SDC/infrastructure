@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+
+<head w3-include-html="common/head.html">
+    <script src="js/includeHTML.js"></script>
+</head>
+
+<body class="d-flex flex-column h-100">
+
+    <header w3-include-html="common/header.html"></header>
+
+    <!-- start page content -->
+    <main class="flex-shrink-0">
+        <div class="container">
+            <h3 class="mt-5">Datasets</h3>
+            <p class="lead">
+                The Secure Data Commons (SDC) platform provides a data lake of various transportation related datasets.
+                The datasets consists of structured, semi-structured or unstructured data and are stored in raw, curated
+                and published formats. Each dataset has different data agreements based on the complexity and
+                sensitivity of the data and is available for SDC users on a need-and-case basis upon appropriate
+                approvals.
+            </p>
+            <h5>Dataset Formats</h5>
+            <p>The dataset formats are described as follows:</p>
+            <ul>
+                <li><span class="fw-bold">Raw datasets</span><br>
+                    The data stored in its native or original format are referred to as Raw datasets. These datasets
+                    could be in structured (databases, logs, financial data etc), semi-structured (HTML, XML, RDF, CSV)
+                    and un-structured (images, PDF, docs). This data is unaltered and stored in as-is format. The data
+                    can be received through continuous streaming sources (APIs, sensors) or one-time load from external
+                    sources
+                </li>
+                <li><span class="fw-bold">Curated datasets</span><br>
+                    Data curation is a process of integrating the raw data collected from various sources, annotating
+                    the data and presenting it in such a way that the value of the data is maintained overtime and the
+                    data remains available for reuse and preservation. Curated datasets enable data discovery and
+                    retrieval, maintain quality, add value and provide for re-use over time, for researchers and data
+                    scientists. The curation process includes data transformations from unstructured and semi structured
+                    formats to a structured format, deduplication of data, data obfuscation, data cleansing etc thus
+                    providing high quality of data for researchers to create meaningful insights
+                </li>
+                <li><span class="fw-bold">Published datasets</span><br>
+                    Published datasets are created by researchers to disclose their research for other users to verify
+                    and reuse them beyond the original purpose for which they were collected. Published datasets are a
+                    result of combining analysis on curated datasets available in SDC platform along with other datasets
+                    or algorithms that is owned/created by a researcher or data scientist
+                </li>
+            </ul>
+        </div>
+    </main>
+    <!-- end page content -->
+
+    <footer w3-include-html="common/footer.html" class="footer mt-auto py-3 bg-light"></footer>
+    <script>includeHTML();</script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
