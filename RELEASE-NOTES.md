@@ -1,8 +1,12 @@
 # SDC Infrastructure Release Notes
-We’re now releasing SDC Infrastructure: Version 0.4.1.
+We’re now releasing SDC Infrastructure: Version 0.4.2.
 
 # Get This Release
 ​To deploy this release, select this version's tag and follow the instructions in the Deployment Plan.
+
+## Version 0.4.2 (2023-04-06)
+### Changes
+- Log4SDC: Add additional validation for setting up custom log4sdc notification topics with configuration
 
 ## Version 0.4.1 (2022-11-04)
 ### Changes
