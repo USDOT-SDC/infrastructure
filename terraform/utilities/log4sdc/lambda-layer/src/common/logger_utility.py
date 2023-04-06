@@ -61,10 +61,20 @@ class LoggerUtility:
             config['component'] = component
 
         ssm = boto3.client('ssm', region_name='us-east-1')
-        config['TOPIC_ARN_ERROR'] = LoggerUtility.get_param(ssm_client=ssm, key='TOPIC_ARN_ERROR')
-        config['TOPIC_ARN_CRITICAL'] = LoggerUtility.get_param(ssm_client=ssm, key='TOPIC_ARN_CRITICAL')
-        config['TOPIC_ARN_ALERT'] = LoggerUtility.get_param(ssm_client=ssm, key='TOPIC_ARN_ALERT')
-        config['LOG_LEVEL'] = LoggerUtility.get_param(ssm_client=ssm, key='LOG_LEVEL', default_value=Constants.LOGGER_DEFAULT_LOG_LEVEL)
+        if not 'KEY_TOPIC_ARN_ERROR' in config:
+            config['KEY_TOPIC_ARN_ERROR'] = 'TOPIC_ARN_ERROR'
+        if not 'KEY_TOPIC_ARN_CRITICAL' in config:
+            config['KEY_TOPIC_ARN_CRITICAL'] = 'TOPIC_ARN_CRITICAL'
+        if not 'KEY_TOPIC_ARN_ALERT' in config:
+            config['KEY_TOPIC_ARN_ALERT'] = 'TOPIC_ARN_ALERT'
+
+        if not 'LOG_LEVEL' in config:
+            config['LOG_LEVEL'] = LoggerUtility.get_param(ssm_client=ssm, key='LOG_LEVEL', default_value=Constants.LOGGER_DEFAULT_LOG_LEVEL)
+
+        config['TOPIC_ARN_ERROR'] = LoggerUtility.get_param(ssm_client=ssm, key=config['KEY_TOPIC_ARN_ERROR'])
+        config['TOPIC_ARN_CRITICAL'] = LoggerUtility.get_param(ssm_client=ssm, key=config['KEY_TOPIC_ARN_CRITICAL'])
+        config['TOPIC_ARN_ALERT'] = LoggerUtility.get_param(ssm_client=ssm, key=config['KEY_TOPIC_ARN_ALERT'])
+
         api_id = LoggerUtility.get_param(ssm_client=ssm, key='API_ID', default_value='set_api_id')
         config['API_ENDPOINT_URL'] = f'https://{api_id}.execute-api.us-east-1.amazonaws.com/log4sdc-api/enqueue'
 
@@ -173,7 +183,7 @@ class LoggerUtility:
     @staticmethod
     def alert(message, subject=Constants.LOGGER_NAME + ' ALERT', userdata=''):
         logger = logging.getLogger(Constants.LOGGER_NAME)
-        logger.error('%s', message)
+        logger.info('%s', message)
         client = boto3.client('sns', region_name='us-east-1')
         if hasattr(LoggerUtility, 'config') and LoggerUtility.config['TOPIC_ARN_ALERT']:
             response = client.publish(TopicArn=LoggerUtility.config['TOPIC_ARN_ALERT'], Subject=subject, Message=message)
