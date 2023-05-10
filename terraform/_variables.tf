@@ -20,10 +20,11 @@ locals {
       default_security_group = data.aws_security_group.default
       transit_gateway        = data.aws_ec2_transit_gateway.default
     }
-    support_email    = nonsensitive(data.aws_ssm_parameter.support_email.value)
-    admin_email      = nonsensitive(data.aws_ssm_parameter.admin_email.value)
-    terraform_bucket = "${nonsensitive(data.aws_ssm_parameter.environment.value)}.sdc.dot.gov.platform.terraform"
-    backup_bucket    = "${nonsensitive(data.aws_ssm_parameter.environment.value)}.sdc.dot.gov.platform.backup"
+    support_email               = nonsensitive(data.aws_ssm_parameter.support_email.value)
+    admin_email                 = nonsensitive(data.aws_ssm_parameter.admin_email.value)
+    terraform_bucket            = aws_s3_bucket.terraform
+    backup_bucket               = aws_s3_bucket.backup
+    instance_maintenance_bucket = aws_s3_bucket.instance_maintenance
   }
   default_tags = {
     "Repository URL" = "https://github.com/USDOT-SDC/"
