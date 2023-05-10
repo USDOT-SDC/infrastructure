@@ -1,10 +1,10 @@
-output "subnet_firewall" {
-  value = aws_subnet.firewall
-}
+# output "subnet_firewall" {
+#   value = aws_subnet.firewall
+# }
 
-output "subnets_routing" {
-  value = aws_subnet.routing
-}
+# output "subnets_routing" {
+#   value = aws_subnet.routing
+# }
 
 output "subnet_support" {
   value = aws_subnet.support

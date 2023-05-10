@@ -1,6 +1,9 @@
 resource "aws_vpc_endpoint" "s3" {
   vpc_id       = var.common.network.vpc.id
   service_name = "com.amazonaws.${var.common.region}.s3"
+  tags = {
+    "Name" = "S3 VPC Endpoint"
+  }
 }
 
 resource "aws_vpc_endpoint_policy" "s3" {
