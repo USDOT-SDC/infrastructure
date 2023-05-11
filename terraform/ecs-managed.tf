@@ -36,7 +36,7 @@ data "aws_subnet" "three" {
   }
   filter {
     name   = "tag:Name"
-    values = ["Subnet 3"]
+    values = ["Infrastructure 3"]
   }
 }
 
@@ -48,7 +48,7 @@ data "aws_subnet" "four" {
   }
   filter {
     name   = "tag:Name"
-    values = ["Subnet 4"]
+    values = ["Infrastructure 4"]
   }
 }
 
@@ -60,7 +60,7 @@ data "aws_subnet" "five" {
   }
   filter {
     name   = "tag:Name"
-    values = ["Subnet 5"]
+    values = ["Infrastructure 5"]
   }
 }
 
@@ -72,7 +72,7 @@ data "aws_subnet" "six" {
   }
   filter {
     name   = "tag:Name"
-    values = ["Subnet 6"]
+    values = [ "Infrastructure 6"]
   }
 }
 
