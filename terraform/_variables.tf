@@ -1,11 +1,13 @@
 locals {
   // Setup some local vars to hold static and dynamic data
+  # use caution when making changes to local.common
+  # local.common is output to tfstate and used by other configurations
   common = {
     account_id  = nonsensitive(data.aws_ssm_parameter.account_id.value)
     region      = nonsensitive(data.aws_ssm_parameter.region.value)
     environment = nonsensitive(data.aws_ssm_parameter.environment.value)
     network = {
-      vpc = data.aws_vpc.public
+      vpc = data.aws_vpc.default
       subnets = concat(
         [module.vpc.subnet_support.id],
         [module.vpc.subnet_researcher.id],

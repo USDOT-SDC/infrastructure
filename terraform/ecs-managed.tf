@@ -1,12 +1,13 @@
-data "aws_vpc" "public" {
-  tags = {
-    Network = "Public"
+data "aws_vpc" "default" {
+  filter {
+    name   = "tag:Name"
+    values = ["Default"]
   }
 }
 
 data "aws_security_group" "default" {
-  // Get the default security group for the public vpc
-  vpc_id = data.aws_vpc.public.id
+  // Get the default security group for the default vpc
+  vpc_id = data.aws_vpc.default.id
   name = "default"
 }
 
