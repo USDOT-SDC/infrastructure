@@ -5,7 +5,7 @@ module "vpc" {
     region      = nonsensitive(data.aws_ssm_parameter.region.value)
     environment = nonsensitive(data.aws_ssm_parameter.environment.value)
     network = {
-      vpc = data.aws_vpc.public
+      vpc = data.aws_vpc.default
       default_security_group = data.aws_security_group.default
       transit_gateway        = data.aws_ec2_transit_gateway.default
     }

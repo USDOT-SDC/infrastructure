@@ -17,25 +17,25 @@
 
 resource "aws_subnet" "support" {
   vpc_id     = var.common.network.vpc.id
-  cidr_block = local.subnet_support.cidr_block
+  cidr_block = local.subnets.support.cidr_block
   tags = {
-    Name = local.subnet_support.name
+    Name = local.subnets.support.name
   }
 }
 
 resource "aws_subnet" "researcher" {
   vpc_id     = var.common.network.vpc.id
-  cidr_block = local.subnet_researcher.cidr_block
+  cidr_block = local.subnets.researcher.cidr_block
   tags = {
-    Name = local.subnet_researcher.name
+    Name = local.subnets.researcher.name
   }
 }
 
 resource "aws_subnet" "infrastructure" {
-  count      = length(local.subnets_infrastructure)
+  count      = length(local.subnets.infrastructures)
   vpc_id     = var.common.network.vpc.id
-  cidr_block = local.subnets_infrastructure[count.index].cidr_block
+  cidr_block = local.subnets.infrastructures[count.index].cidr_block
   tags = {
-    Name = local.subnets_infrastructure[count.index].name
+    Name = local.subnets.infrastructures[count.index].name
   }
 }
