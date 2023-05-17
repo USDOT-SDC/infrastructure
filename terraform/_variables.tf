@@ -24,9 +24,9 @@ locals {
     }
     support_email                      = nonsensitive(data.aws_ssm_parameter.support_email.value)
     admin_email                        = nonsensitive(data.aws_ssm_parameter.admin_email.value)
-    terraform_bucket                   = aws_s3_bucket.terraform
-    backup_bucket                      = aws_s3_bucket.backup
-    instance_maintenance_bucket        = aws_s3_bucket.instance_maintenance
+    terraform_bucket                   = { id = aws_s3_bucket.terraform.id }
+    backup_bucket                      = { id = aws_s3_bucket.backup.id }
+    instance_maintenance_bucket        = { id = aws_s3_bucket.instance_maintenance.id }
     research_teams_vpc_endpoint_lambda = data.terraform_remote_state.research_teams.outputs.vpc_endpoint_lambda.dns_entry[0].dns_name
   }
   default_tags = {
