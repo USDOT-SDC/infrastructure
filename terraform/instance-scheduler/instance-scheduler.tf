@@ -6,9 +6,10 @@ locals {
 }
 
 # === Build the Lambda deployment package ===
-resource "null_resource" "run-deploy" {
-  triggers = {
-    timestamp = "2022-12-01T03:14" # update to force a rebuild of the deployment package, or use timestamp()
+resource "terraform_data" "instance_scheduler_deploy_py" {
+  triggers_replace = {
+    lambda_function = filesha1("instance-scheduler/lambdas/instance-scheduler/lambda_function.py")
+    requirements    = filesha1("instance-scheduler/lambdas/instance-scheduler/requirements.txt")
   }
   provisioner "local-exec" {
     command     = "python instance-scheduler/lambdas/instance-scheduler/deploy.py"
@@ -24,7 +25,7 @@ resource "aws_lambda_function" "instance_scheduler" {
   role             = aws_iam_role.instance_scheduler.arn
   handler          = "lambda_function.lambda_handler"
   runtime          = "python3.9"
-  depends_on       = [null_resource.run-deploy]
+  depends_on       = [terraform_data.instance_scheduler_deploy_py]
   timeout          = "300"
   vpc_config {
     subnet_ids         = var.common.network.subnets
