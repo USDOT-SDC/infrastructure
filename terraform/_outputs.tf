@@ -3,7 +3,3 @@
 output "common" {
     value = local.common
 }
-
-output "vpc_debug" {
-    value = module.vpc.debug
-}
