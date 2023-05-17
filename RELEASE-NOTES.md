@@ -4,6 +4,12 @@ We’re now releasing SDC Infrastructure: Version 0.4.2.
 # Get This Release
 ​To deploy this release, select this version's tag and follow the instructions in the Deployment Plan.
 
+## Version 0.4.3 (2023-05-17)
+### Changes
+- Add instance maintenance bucket
+- Add disk alert script for Linux instances
+- Log4SDC cleanup
+
 ## Version 0.4.2 (2023-04-06)
 ### Changes
 - Log4SDC: Add additional validation for setting up custom log4sdc notification topics with configuration
