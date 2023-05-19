@@ -25,6 +25,7 @@ resource "aws_route_table_association" "main_infrastructure" {
   count          = length(aws_subnet.infrastructure)
   route_table_id = aws_route_table.main.id
   subnet_id      = aws_subnet.infrastructure[count.index].id
+  depends_on     = [aws_subnet.infrastructure]
 }
 
 resource "aws_route" "main_transit_gateway" {
