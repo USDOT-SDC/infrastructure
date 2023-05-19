@@ -1,9 +1,11 @@
-# Version 0.4.1 Test Plan
+# Version 0.4.3 Test Plan
 This Test Plan is designed to prescribe the scope, objectives, test activities and deliverables of the testing activities for the Research Teams.
 
 ### In Scope Testing
 Verify the following and attach the results to the Pull Request as a comment.
-- Check logs for /aws/lambda/instance-scheduler to ensure it is logging `get_parameter('Global-Schedule')...`
+- Check that `{environment}.{domain}.platform.instance-maintenance` has been created
+- Copy `s3://{environment}.{domain}.platform.instance-maintenance/infrastructure/utilities/disk-alert-linux.py` to a Linux instance
+- Run `py disk-alert-linux.py` to insure it works
 
 ### Out of Scope Testing
 Verify the following if in scope testing reveals issues or issues are suspected, attach the results to the Pull Request as a comment.

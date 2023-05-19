@@ -12,11 +12,11 @@
 data "archive_file" "lambda_zip" {
     type        = "zip"
     source_dir  = "utilities/log4sdc/lambda-elasticsearch/src"
-    output_path = "log4sdc-es-publisher.zip"
+    output_path = "utilities/log4sdc/lambda-elasticsearch/log4sdc-es-publisher.zip"
 }
 
 resource "aws_lambda_function" "log4sdc_es_publisher" {
-    filename = "log4sdc-es-publisher.zip"
+    filename = "utilities/log4sdc/lambda-elasticsearch/log4sdc-es-publisher.zip"
     function_name = "log4sdc-elasticsearch-publisher"
     role = aws_iam_role.log4sdc_es_publisher_role.arn
     handler = "lambda-elasticsearch-publisher.lambda_handler"

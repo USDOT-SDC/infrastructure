@@ -1,19 +1,19 @@
-# Version 0.4.1 Deployment Plan
+# Version 0.4.3 Deployment Plan
 
 ### Deployment Build Environment
 - Windows
 - Install or update as needed
    - AWS CLI [version 2](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
-   - Terraform [1.3.4](https://releases.hashicorp.com/terraform/1.3.4/)
-      - Updated from 1.2.7
-   - hashicorp/aws [4.38.0](https://registry.terraform.io/providers/hashicorp/aws/4.38.0)
-      - Updated from 4.26.0
-   - hashicorp/archive [2.2.0](https://registry.terraform.io/providers/hashicorp/archive/2.2.0)
-      - Updated from None
-   - hashicorp/local [2.2.3](https://registry.terraform.io/providers/hashicorp/local/2.2.3)
-      - Updated from None
-   - hashicorp/null [3.2.0](https://registry.terraform.io/providers/hashicorp/null/3.2.0)
-      - Updated from 3.1.1
+   - Terraform 1.4.6
+      - *Updated from 1.3.4*
+   - hashicorp/aws 4.66.1
+      - *Updated from 4.38.0*
+   - hashicorp/archive 2.3.0
+      - *Updated from 2.2.0*
+   - hashicorp/local 2.4.0
+      - *Updated from 2.2.3*
+   - hashicorp/null 3.2.1
+      - *Updated from 3.2.0*
 
 ### Deployment
 Notes:
@@ -26,6 +26,7 @@ Notes:
    1. Navigate to the root module directory `terraform`
    1. Run `terraform init -backend-config "bucket={environment}.{domain}.platform.terraform"`
    1. Run `terraform init -version` to verify the installed Terraform and AWS Provider versions, update as needed
+   1. Run `terraform import aws_s3_bucket.terraform {environment}.{domain}.platform.terraform`
    1. Run `terraform plan -out=tfplan_v{version}`
       1. Check the plan, continue if it is correct
       1. Ensure there are no changes to out of scope resources
@@ -35,8 +36,3 @@ Notes:
       1. If needed, run `terraform show tfplan_v{version}` to check the plan
    1. Attach `tfplan_v{version}` to the Pull Request as a comment
    1. Execute the Test Plan to ensure the deployment was successful
-
-### Individual module deployment
-#### Utilities.Log4SDC Module
-See https://github.com/USDOT-SDC/infrastructure/blob/main/plans/deployment.md
-

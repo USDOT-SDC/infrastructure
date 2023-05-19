@@ -1,0 +1,65 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+import boto3
+from botocore.config import Config
+import json
+import subprocess
+from ec2_metadata import ec2_metadata
+
+aws_config = Config(
+    region_name="us-east-1",
+    retries={"max_attempts": 10, "mode": "standard"},
+)
+
+
+def get_env():
+    ssm_client = boto3.client("ssm", config=aws_config)
+    response = ssm_client.get_parameter(Name="environment")
+    return response["Parameter"]["Value"]
+
+
+def send(payload):
+    lambda_client = boto3.client(
+        "lambda",
+        config=aws_config,
+        endpoint_url=endpoint_url,
+    )
+    this_payload = {}
+    this_payload["type"] = "email"
+    this_payload["to_addresses"] = payload.get("addresses")
+    this_payload["subject"] = payload.get("subject")
+    this_payload["body_text"] = payload.get("body_text")
+    this_payload["reply_to_addresses"] = payload.get("addresses")
+    response = lambda_client.invoke(
+        FunctionName="research_teams_notification_service", Payload=json.dumps(this_payload)
+    )
+    return_response = {
+        "StatusCode": response.get("StatusCode"),
+        "RequestId": response.get("ResponseMetadata").get("RequestId"),
+    }
+    return return_response
+
+
+env = get_env()
+endpoint_url = "${endpoint_url}"
+email_address = "${email_address}"
+server_name = ec2_metadata.private_hostname
+email_payload = {
+    "addresses": [email_address],
+    "subject": f"Disk Alert: {server_name}",
+    "body_text": server_name + " is almost out of disk space",
+}
+
+threshold = 90
+partition = "/"
+df = subprocess.Popen(["df", "-h"], stdout=subprocess.PIPE)
+for line in df.stdout:
+    split_line = line.decode().split()
+    try:
+        actual = int(split_line[4][:-1])
+        if actual > threshold:
+            email_response = send(email_payload)
+            print("email notification sent")
+    except ValueError:
+        pass  # do nothing!
