@@ -4,6 +4,7 @@ import datetime as dt
 from datetime import time, timezone, timedelta
 import calendar
 import pytz
+from os import environ
 
 # from pathlib import Path
 
@@ -23,6 +24,11 @@ current_utc_datetime = dt.datetime.now(timezone.utc)
 print("current_utc_datetime: " + str(current_utc_datetime))
 print("")
 
+im_bucket = environ.get(
+    "instance_maintenance_bucket",
+    default="dev.sdc.dot.gov.platform.instance-maintenance",
+)
+
 
 def get_env():
     ssm = boto3.client("ssm", region_name=region_name)
@@ -32,13 +38,13 @@ def get_env():
 
 def get_global_schedule():
     global_schedule = []
-    ssm = boto3.client("ssm", region_name=region_name)
+    s3 = boto3.client("s3")
     ec2 = boto3.client("ec2", region_name=region_name)
-    # get the global schedule from parameter store
-    print("get_parameter('Global-Schedule')...")
-    ssm_parameter = ssm.get_parameter(Name="/Instance-Scheduler/Global-Schedule", WithDecryption=False)
-    print("get_parameter('Global-Schedule')...Done")
-    yaml_sch = yaml.safe_load(ssm_parameter["Parameter"]["Value"])
+    global_schedule_object = s3.get_object(
+        Bucket=im_bucket,
+        Key="infrastructure/instance-scheduler/global-schedule.yaml",
+    )
+    yaml_sch = yaml.safe_load(global_schedule_object["Body"].read())
     if "Timezone" in yaml_sch and "Tags" in yaml_sch:
         tz = yaml_sch["Timezone"]
         gs_tags = yaml_sch["Tags"]
@@ -107,7 +113,8 @@ def get_team_schedules():
     ec2 = boto3.client("ec2", region_name=region_name)
     for bucket in s3.buckets.all():
         # loop all the buckets
-        if bucket.name.startswith(get_env() + ".sdc.dot.gov.team"):
+        team_buckets = get_env() + ".sdc.dot.gov.team"
+        if bucket.name.startswith(team_buckets):
             # is a team bucket
             for o in bucket.objects.filter(Prefix="Workstation-Schedules/"):
                 # loop all the objects in the Workstation-Schedules prefix
