@@ -1,4 +1,4 @@
-# Version 0.4.3 Deployment Plan
+# Version 0.4.4 Deployment Plan
 
 ### Deployment Build Environment
 - Windows
@@ -6,8 +6,8 @@
    - AWS CLI [version 2](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
    - Terraform 1.4.6
       - *Updated from 1.3.4*
-   - hashicorp/aws 4.66.1
-      - *Updated from 4.38.0*
+   - hashicorp/aws 4.67.1
+      - *Updated from 4.66.0*
    - hashicorp/archive 2.3.0
       - *Updated from 2.2.0*
    - hashicorp/local 2.4.0
