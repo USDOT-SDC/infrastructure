@@ -4,6 +4,10 @@ We’re now releasing SDC Infrastructure: Version 0.4.2.
 # Get This Release
 ​To deploy this release, select this version's tag and follow the instructions in the Deployment Plan.
 
+## Version 0.4.4 (2023-05-22)
+### Changes
+- Update instance scheduler to read global schedule from S3, not parameter store
+
 ## Version 0.4.3 (2023-05-17)
 ### Changes
 - Add instance maintenance bucket

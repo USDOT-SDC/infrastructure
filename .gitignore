@@ -10,11 +10,11 @@
 **/terraform/**/*.conf
 
 # Lambda deployment packages
-**/terraform/**/lambdas/**/deployment-package
-**/terraform/**/lambdas/**/deployment-package/**
-**/terraform/**/lambdas/**/*.zip
-**/terraform/**/lambdas/**/*.log
-**/terraform/**/lambdas/**/keep-this-venv
+**/terraform/**/src/**/deployment-package
+**/terraform/**/src/**/deployment-package/**
+**/terraform/**/src/**/*.zip
+**/terraform/**/src/**/*.log
+**/terraform/**/src/**/keep-this-venv
 terraform/*.zip
 terraform/utilities/log4sdc/**/*.zip
 

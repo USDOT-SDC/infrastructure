@@ -1,18 +1,11 @@
-locals {
-  tags = {
-    Module = "instance-scheduler"
-  }
-  isl_path = "${path.module}/lambdas/instance-scheduler"
-}
-
 # === Build the Lambda deployment package ===
 resource "terraform_data" "instance_scheduler_deploy_py" {
   triggers_replace = {
-    lambda_function = filesha1("instance-scheduler/lambdas/instance-scheduler/lambda_function.py")
-    requirements    = filesha1("instance-scheduler/lambdas/instance-scheduler/requirements.txt")
+    lambda_function = filesha1("${local.lambda_src_path}/lambda_function.py")
+    requirements    = filesha1("${local.lambda_src_path}/requirements.txt")
   }
   provisioner "local-exec" {
-    command     = "python instance-scheduler/lambdas/instance-scheduler/deploy.py"
+    command     = "python ${local.lambda_src_path}/deploy.py"
     interpreter = ["PowerShell", "-Command"]
     on_failure  = continue
   }
@@ -20,8 +13,8 @@ resource "terraform_data" "instance_scheduler_deploy_py" {
 
 resource "aws_lambda_function" "instance_scheduler" {
   function_name    = "instance-scheduler"
-  filename         = "${local.isl_path}/deployment-package.zip"
-  source_code_hash = fileexists("${local.isl_path}/deployment-package.zip") ? filebase64sha256("${local.isl_path}/deployment-package.zip") : timestamp()
+  filename         = "${local.lambda_src_path}/deployment-package.zip"
+  source_code_hash = fileexists("${local.lambda_src_path}/deployment-package.zip") ? filebase64sha256("${local.lambda_src_path}/deployment-package.zip") : timestamp()
   role             = aws_iam_role.instance_scheduler.arn
   handler          = "lambda_function.lambda_handler"
   runtime          = "python3.9"
@@ -31,6 +24,11 @@ resource "aws_lambda_function" "instance_scheduler" {
     subnet_ids         = var.common.network.subnets
     security_group_ids = [var.common.network.default_security_group.id]
   }
+  environment {
+    variables = {
+      instance_maintenance_bucket = var.common.instance_maintenance_bucket.id
+    }
+  }
   tags = local.tags
 }
 
@@ -39,25 +37,8 @@ resource "aws_lambda_permission" "instance_scheduler" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.instance_scheduler.function_name
   principal     = "events.amazonaws.com"
-  source_arn    = aws_cloudwatch_event_rule.instance_scheduler.arn # "arn:aws:events:eu-west-1:111122223333:rule/RunDaily"
+  source_arn    = aws_cloudwatch_event_rule.instance_scheduler.arn
 }
-
-/**
-{
-  Effect: "Allow",
-  Action: "lambda:InvokeFunction",
-  Resource: "arn:aws:lambda:region:account-id:function:function-name",
-  "Principal": {
-    "Service": "events.amazonaws.com"
-  },
-  "Condition": {
-    "ArnLike": {
-      "AWS:SourceArn": "arn:aws:events:region:account-id:rule/rule-name"
-    }
-  },
-  Sid: "InvokeLambdaFunction"
-}
-**/
 
 resource "aws_iam_role" "instance_scheduler" {
   name = "instance_scheduler_role"

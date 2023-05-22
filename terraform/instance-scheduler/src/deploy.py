@@ -44,15 +44,16 @@ dirs = get_dirs()
 
 print('================================================================================')
 keep_file = "keep-this-venv"
+venv_dir = ".venv"
 if not os.path.exists(keep_file):
     log_it("The " + keep_file + " file was not found, so venv will be rebuilt.")
     log_it('Creating virtual environment...')
     shutil.rmtree("venv", ignore_errors=True)
-    subprocess.check_call([sys.executable, "-m", "venv", "venv", "--copies", "--clear"])
+    subprocess.check_call([sys.executable, "-m", "venv", venv_dir, "--copies", "--clear"])
     log_it('Creating virtual environment...Done')
     # upgrade pip
     log_it('Upgrading pip...')
-    path_to_executable = os.path.join(os.getcwd(), "venv", dirs['bin'], "python")
+    path_to_executable = os.path.join(os.getcwd(), venv_dir, dirs['bin'], "python")
     subprocess.check_call([path_to_executable, "-m", "pip", "install", "--upgrade", "pip"])
     log_it('Upgrading pip...Done')
     # upgrade setuptools
@@ -81,8 +82,8 @@ os.makedirs(dst_path)
 # set paths
 dp_paths = [
     {"src": os.path.join(os.getcwd(), "lambda_function.py"), "dst": os.path.join(dst_path, "lambda_function.py")},
-    {"src": os.path.join(os.getcwd(), "venv", dirs['lib'], "site-packages", "pytz"), "dst": os.path.join(dst_path, "pytz")},
-    {"src": os.path.join(os.getcwd(), "venv", dirs['lib'], "site-packages", "yaml"), "dst": os.path.join(dst_path, "yaml")},
+    {"src": os.path.join(os.getcwd(), venv_dir, dirs['lib'], "site-packages", "pytz"), "dst": os.path.join(dst_path, "pytz")},
+    {"src": os.path.join(os.getcwd(), venv_dir, dirs['lib'], "site-packages", "yaml"), "dst": os.path.join(dst_path, "yaml")},
 ]
 
 # copy to deployment-package
