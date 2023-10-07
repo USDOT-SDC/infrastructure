@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+
+<head w3-include-html="common/head.html">
+    <script src="js/main.js"></script>
+    <script src="js/includeHTML.js"></script>
+</head>
+
+<body class="d-flex flex-column h-100">
+
+    <header w3-include-html="common/header.html"></header>
+
+    <!-- start page content -->
+    <main class="flex-shrink-0">
+        <div class="container">
+            <div class="mt-5">
+                <script type="text/javascript" language="javascript">
+                    const userAction = async () => {
+                        const response = await fetch('https://ymzn5cwpkwut2xiffz7o7ur6he0aijzb.lambda-url.us-east-1.on.aws');
+                        const myJson = await response.json(); //extract JSON from the http response
+                        return myJson
+                        // do something with myJson
+                        // console.log(myJson)
+                    }
+                    myJson = userAction()
+                    console.log(myJson)
+                    document.write(myJson.PromiseResult)
+                </script>
+            </div>
+        </div>
+    </main>
+    <!-- end page content -->
+
+    <footer w3-include-html="common/footer.html" class="footer mt-auto py-3 bg-light"></footer>
+    <script>includeHTML();</script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
