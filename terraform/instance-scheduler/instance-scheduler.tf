@@ -3,6 +3,7 @@ resource "terraform_data" "instance_scheduler_deploy_py" {
   triggers_replace = {
     lambda_function = filesha1("${local.lambda_src_path}/lambda_function.py")
     requirements    = filesha1("${local.lambda_src_path}/requirements.txt")
+    fileexists      = fileexists("${local.lambda_src_path}/deployment-package.zip") ? 1 : 0
   }
   provisioner "local-exec" {
     command     = "python ${local.lambda_src_path}/deploy.py"

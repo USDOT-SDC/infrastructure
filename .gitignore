@@ -1,6 +1,4 @@
 ### repo specific ignores ###
-# Lock files
-**/terraform/**/.terraform.lock.hcl
 **/tfplan*
 
 # Keep the example file
