@@ -182,7 +182,7 @@ Code should include comments for clarity, but should also be self-documenting. T
 In Python scripts:
   - Include docstrings: [Wikipedia: Docstring ∬Python](https://en.wikipedia.org/wiki/Docstring#Python)
     ```python
-    def my_function(arg1, arg2):
+    def my_function(arg1: Any, arg2: Any) -> Any:
     """This function does something.
 
     Args:
