@@ -1,3 +1,4 @@
-# Version 0.4.4 Rollback Plan
-1. Pull version tag 0.4.3 from the repo
-1. Execute the Deployment and Test Plans
+# Rollback Plan
+1. Checkout the previous version [Tag](https://github.com/USDOT-SDC/infrastructure/tags)
+1. Execute the [Deployment Plan](/plans/deployment.md)
+1. Execute the [Test Plan](/plans/test.md) to ensure the rollback was successful

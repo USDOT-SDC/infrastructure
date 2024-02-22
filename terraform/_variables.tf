@@ -32,8 +32,8 @@ locals {
   default_tags = {
     "Repository URL" = "https://github.com/USDOT-SDC/"
     Repository       = "infrastructure"
-    Project          = "SDC-Platform"
-    Team             = "SDC-Platform"
-    Owner            = "SDC Support Team"
+    Project          = "Platform"
+    Team             = "Platform"
+    Owner            = "Support Team"
   }
 }

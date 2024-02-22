@@ -22,7 +22,7 @@ def get_dirs():
         lib_dir = 'Lib'
     else:
         bin_dir = 'bin'
-        lib_dir = 'lib/python3.9'
+        lib_dir = 'lib/python3.11'
     repo_dir = os.path.split(os.getcwd())[-1]
     return {'bin': bin_dir, 'lib': lib_dir, 'repo': repo_dir}
 
@@ -35,9 +35,9 @@ def copyanything(src, dst):
     else: raise
 
 
-# must run Python 3.9.x
-if not (sys.version_info.major == 3 and sys.version_info.minor == 9):
-    raise EnvironmentError("Python must be version 3.9.x")
+# must run Python 3.11.x
+if not (sys.version_info.major == 3 and sys.version_info.minor == 11):
+    raise EnvironmentError("Python must be version 3.11.x")
 
 # get the bin/scripts dirs
 dirs = get_dirs()
