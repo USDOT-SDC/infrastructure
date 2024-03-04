@@ -28,7 +28,7 @@ resource "aws_vpc_endpoint_policy" "s3_gateway" {
           "Resource" : "*",
           "Condition" : {
             "NumericLessThan" : {
-              "vpce:TlsVersion" : 1.2
+              "s3:TlsVersion" : 1.2
             }
           }
         }
@@ -80,7 +80,7 @@ resource "aws_vpc_endpoint_policy" "s3_interface" {
           "Resource" : "*",
           "Condition" : {
             "NumericLessThan" : {
-              "vpce:TlsVersion" : 1.2
+              "s3:TlsVersion" : 1.2
             }
           }
         }
