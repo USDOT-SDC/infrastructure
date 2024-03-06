@@ -118,18 +118,6 @@ resource "aws_vpc_endpoint_policy" "ssm_interface" {
           "Principal" : "*",
           "Action" : "*",
           "Resource" : "*"
-        },
-        {
-          "Sid" : "EnforceTLSv12orHigher",
-          "Effect" : "Deny",
-          "Principal" : "*",
-          "Action" : "*",
-          "Resource" : "*",
-          "Condition" : {
-            "NumericLessThan" : {
-              "vpce:TlsVersion" : 1.2
-            }
-          }
         }
       ]
     }
@@ -165,18 +153,6 @@ resource "aws_vpc_endpoint_policy" "sqs_interface" {
           "Principal" : "*",
           "Action" : "*",
           "Resource" : "*"
-        },
-        {
-          "Sid" : "EnforceTLSv12orHigher",
-          "Effect" : "Deny",
-          "Principal" : "*",
-          "Action" : "*",
-          "Resource" : "*",
-          "Condition" : {
-            "NumericLessThan" : {
-              "vpce:TlsVersion" : 1.2
-            }
-          }
         }
       ]
     }
