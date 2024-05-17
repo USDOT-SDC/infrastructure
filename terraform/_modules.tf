@@ -1,3 +1,11 @@
+module "api" {
+  module_name = "API"
+  module_slug = "api"
+  source = "./api"
+  common = local.common
+  portal2_backend_route53_zone = local.portal2_backend_route53_zone
+}
+
 module "vpc" {
   source = "./vpc"
   common = {
