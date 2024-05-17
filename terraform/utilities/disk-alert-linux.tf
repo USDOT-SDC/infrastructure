@@ -9,7 +9,7 @@ resource "aws_s3_object" "disk_alert_linux_script" {
   content = templatefile(
     "${local.disk_alert_linux_script_path}.tftpl",
     {
-      endpoint_url  = "https://${var.common.research_teams_vpc_endpoint_lambda}/",
+      endpoint_url  = "https://${var.research_teams_vpc_endpoint_lambda}/",
       email_address = var.common.admin_email
     }
   )

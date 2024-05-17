@@ -1,3 +1,11 @@
+module "api" {
+  module_name = "API"
+  module_slug = "api"
+  source = "./api"
+  common = local.common
+  portal2_backend_route53_zone = local.portal2_backend_route53_zone
+}
+
 module "vpc" {
   source = "./vpc"
   common = {
@@ -28,6 +36,7 @@ module "log4sdc" {
 }
 
 module "utilities" {
-  source = "./utilities"
-  common = local.common
+  source                             = "./utilities"
+  common                             = local.common
+  research_teams_vpc_endpoint_lambda = local.research_teams_vpc_endpoint_lambda
 }
