@@ -28,6 +28,7 @@ module "log4sdc" {
 }
 
 module "utilities" {
-  source = "./utilities"
-  common = local.common
+  source                             = "./utilities"
+  common                             = local.common
+  research_teams_vpc_endpoint_lambda = local.research_teams_vpc_endpoint_lambda
 }

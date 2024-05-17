@@ -22,13 +22,14 @@ locals {
       default_security_group = data.aws_security_group.default
       transit_gateway        = data.aws_ec2_transit_gateway.default
     }
-    support_email                      = nonsensitive(data.aws_ssm_parameter.support_email.value)
-    admin_email                        = nonsensitive(data.aws_ssm_parameter.admin_email.value)
-    terraform_bucket                   = { id = aws_s3_bucket.terraform.id }
-    backup_bucket                      = { id = aws_s3_bucket.backup.id }
-    instance_maintenance_bucket        = { id = aws_s3_bucket.instance_maintenance.id }
-    research_teams_vpc_endpoint_lambda = data.terraform_remote_state.research_teams.outputs.vpc_endpoint_lambda.dns_entry[0].dns_name
+    support_email               = nonsensitive(data.aws_ssm_parameter.support_email.value)
+    admin_email                 = nonsensitive(data.aws_ssm_parameter.admin_email.value)
+    terraform_bucket            = { id = aws_s3_bucket.terraform.id }
+    backup_bucket               = { id = aws_s3_bucket.backup.id }
+    instance_maintenance_bucket = { id = aws_s3_bucket.instance_maintenance.id }
   }
+  research_teams_vpc_endpoint_lambda = data.terraform_remote_state.research_teams.outputs.vpc_endpoint_lambda.dns_entry[0].dns_name
+  portal2_backend_route53_zone       = data.terraform_remote_state.portal2.outputs.backend.route53_zone
   default_tags = {
     "Repository URL" = "https://github.com/USDOT-SDC/"
     Repository       = "infrastructure"
