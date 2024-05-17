@@ -1,26 +1,9 @@
 # import {
-#   to = module.api
+#   to = 
 #   id = ""
 # }
 
-
 import {
-  to = module.api.aws_api_gateway_integration.token
-  id = "z8k3bahtlf/uwuv7p/POST"
+  to = module.api.aws_lambda_function.token
+  id = "api_generate_token"
 }
-
-import {
-  to = module.api.aws_api_gateway_method.token
-  id = "z8k3bahtlf/uwuv7p/POST"
-}
-
-# import {
-#   to = module.api.aws_api_gateway_method_response.token
-#   id = "z8k3bahtlf/uwuv7p/POST/200"
-# }
-
-import {
-  to = module.api.aws_api_gateway_resource.token
-  id = "z8k3bahtlf/uwuv7p"
-}
-
