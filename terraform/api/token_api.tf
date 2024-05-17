@@ -29,9 +29,8 @@ resource "aws_api_gateway_integration" "token" {
   http_method             = aws_api_gateway_method.token.http_method
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
-  # uri                     = aws_lambda_function.token.invoke_arn
-  uri              = "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:505135622787:function:api_generate_token/invocations"
-  content_handling = "CONVERT_TO_TEXT"
+  uri                     = aws_lambda_function.token.invoke_arn
+  content_handling        = "CONVERT_TO_TEXT"
 }
 
 # === Resource -> Method -> Integration -> Response ===
