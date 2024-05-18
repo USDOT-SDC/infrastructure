@@ -58,3 +58,70 @@ resource "aws_api_gateway_deployment" "api" {
     create_before_destroy = true
   }
 }
+
+# === REST API Usage Plans ===
+# --- Support Team ---
+resource "aws_api_gateway_usage_plan" "support_team" {
+  name        = "api_support_team"
+  description = "SDC API Usage Plan for the Support Team"
+
+  api_stages {
+    api_id = aws_api_gateway_rest_api.api.id
+    stage  = aws_api_gateway_stage.v1.stage_name
+  }
+
+  quota_settings {
+    limit  = 1000000
+    offset = 0
+    period = "MONTH"
+  }
+
+  throttle_settings {
+    burst_limit = 1000
+    rate_limit  = 10000
+  }
+}
+
+# --- Data Providers ---
+resource "aws_api_gateway_usage_plan" "data_providers" {
+  name        = "api_data_providers"
+  description = "SDC API Usage Plan for Data Providers"
+
+  api_stages {
+    api_id = aws_api_gateway_rest_api.api.id
+    stage  = aws_api_gateway_stage.v1.stage_name
+  }
+
+  quota_settings {
+    limit  = 1000000
+    offset = 0
+    period = "MONTH"
+  }
+
+  throttle_settings {
+    burst_limit = 1000
+    rate_limit  = 10000
+  }
+}
+
+# --- Research Teams ---
+resource "aws_api_gateway_usage_plan" "research_teams" {
+  name        = "api_research_teams"
+  description = "SDC API Usage Plan for the Research Teams"
+
+  api_stages {
+    api_id = aws_api_gateway_rest_api.api.id
+    stage  = aws_api_gateway_stage.v1.stage_name
+  }
+
+  quota_settings {
+    limit  = 1000000
+    offset = 0
+    period = "MONTH"
+  }
+
+  throttle_settings {
+    burst_limit = 1000
+    rate_limit  = 10000
+  }
+}
