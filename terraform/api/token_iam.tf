@@ -26,7 +26,7 @@ resource "aws_iam_role" "token" {
             "Sid" : "AllowListRoleTags",
             "Effect" : "Allow",
             "Action" : "iam:ListRoleTags",
-            "Resource" : "arn:aws:iam::505135622787:role/user_*"
+            "Resource" : "arn:aws:iam::${var.common.account_id}:role/user_*"
           }
         ]
       }
@@ -42,7 +42,7 @@ resource "aws_iam_role" "token" {
             "Sid" : "AllowCreateLogGroup",
             "Effect" : "Allow",
             "Action" : "logs:CreateLogGroup",
-            "Resource" : "arn:aws:logs:us-east-1:505135622787:*"
+            "Resource" : "arn:aws:logs:${var.common.region}:${var.common.account_id}:*"
           },
           {
             "Sid" : "AllowCreatePutLogs",
@@ -52,7 +52,7 @@ resource "aws_iam_role" "token" {
               "logs:PutLogEvents"
             ],
             "Resource" : [
-              "arn:aws:logs:us-east-1:505135622787:log-group:/aws/lambda/api_token:*"
+              "arn:aws:logs:${var.common.region}:${var.common.account_id}:log-group:/aws/lambda/${aws_lambda_function.token.function_name}:*"
             ]
           }
         ]
