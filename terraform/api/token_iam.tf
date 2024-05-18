@@ -1,6 +1,5 @@
 resource "aws_iam_role" "token" {
-  #   name = "platform.lambda.api_token.role"
-  name = "api_generate_token"
+  name = "platform.lambda.${local.api_token_name}.role"
   path = "/service-role/"
   assume_role_policy = jsonencode(
     {
@@ -52,7 +51,7 @@ resource "aws_iam_role" "token" {
               "logs:PutLogEvents"
             ],
             "Resource" : [
-              "arn:aws:logs:${var.common.region}:${var.common.account_id}:log-group:/aws/lambda/${aws_lambda_function.token.function_name}:*"
+              "arn:aws:logs:${var.common.region}:${var.common.account_id}:log-group:/aws/lambda/${local.api_token_name}:*"
             ]
           }
         ]
