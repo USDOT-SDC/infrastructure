@@ -53,7 +53,7 @@ def lambda_handler(event: dict, context: dict) -> dict[str, Any]:
     # print(f"User PIN: {user_pin}")
 
     # get the pin from the role
-    role_name: str = f"user_{username}"
+    role_name: str = f"api_user_{username}"
     response: dict = iam_client().list_role_tags(RoleName=role_name)
     tags: list | bool = response.get("Tags", False)
     if not tags:
