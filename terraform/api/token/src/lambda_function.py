@@ -83,7 +83,7 @@ def lambda_handler(event: dict, context: dict) -> dict[str, Any]:
     # get the credentials from the assumed_role and make them json str
     credentials: dict = assumed_role.get("Credentials", {})
     print(f"Username: {username}, User PIN: {user_pin}, AccessKeyId: {credentials.get("AccessKeyId", "")}")
-    credentials: str = json.dumps(credentials, default=str)
+    credentials: str = json.dumps(credentials, default=json_converter)
     # print("credentials: " + credentials)
 
     # return the credentials
