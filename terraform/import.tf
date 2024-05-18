@@ -1,9 +1,9 @@
 # import {
-#   to = module.api
+#   to = 
 #   id = ""
 # }
 
-# import {
-#   to = module.api.aws_route53_record.api
-#   id = "Z103672221FNFH7O9E9OG_api.sdc-dev.dot.gov_A"
-# }
+import {
+  to = module.api.aws_api_gateway_usage_plan.support_team
+  id = "vnhfri"
+}
