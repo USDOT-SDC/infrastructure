@@ -4,6 +4,6 @@
 # }
 
 import {
-  to = module.api.aws_lambda_function.token
-  id = "api_generate_token"
+  to = module.api.aws_api_gateway_usage_plan.support_team
+  id = "vnhfri"
 }
