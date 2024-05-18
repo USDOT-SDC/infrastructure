@@ -1,8 +1,9 @@
+from boto3 import client
+from typing import Any
 import json
 import sys
-from typing import Any
-from boto3 import client
 import uuid
+import datetime
 
 
 def iam_client() -> client:
@@ -31,6 +32,9 @@ def sts_client() -> client:
 def get_uuid() -> str:
     return str(uuid.uuid4())
 
+def json_converter(o):
+  if isinstance(o, datetime.datetime):
+    return o.__str__()
 
 def lambda_handler(event: dict, context: dict) -> dict[str, Any]:
 
@@ -38,13 +42,13 @@ def lambda_handler(event: dict, context: dict) -> dict[str, Any]:
     username: str | bool = event.get("queryStringParameters", False).get("username", False)
     if not username:
         sys.exit("No username was found in the queryStringParameters")
-    print(f"Username: {username}")
+    # print(f"Username: {username}")
 
     # check that pin was passed
     user_pin: str | bool = event.get("queryStringParameters", False).get("pin", False)
     if not user_pin:
         sys.exit("No pin was found in the queryStringParameters")
-    print(f"User PIN: {user_pin}")
+    # print(f"User PIN: {user_pin}")
 
     # get the pin from the role
     role_name: str = f"user_{username}"
@@ -78,8 +82,9 @@ def lambda_handler(event: dict, context: dict) -> dict[str, Any]:
 
     # get the credentials from the assumed_role and make them json str
     credentials: dict = assumed_role.get("Credentials", {})
-    credentials: str = json.dumps(credentials, indent=3, default=str)
-    print("credentials: " + credentials)
+    print(f"Username: {username}, User PIN: {user_pin}, AccessKeyId: {credentials.get("AccessKeyId", "")}")
+    credentials: str = json.dumps(credentials, default=str)
+    # print("credentials: " + credentials)
 
     # return the credentials
     return {
