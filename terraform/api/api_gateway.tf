@@ -47,7 +47,9 @@ resource "aws_api_gateway_deployment" "api" {
           aws_api_gateway_integration.health_get_mock,
           aws_api_gateway_integration_response.health_get_200,
           aws_api_gateway_method_response.health_get_200,
-        #   module.api
+          aws_api_gateway_resource.token,
+          aws_api_gateway_method.token,
+          aws_api_gateway_integration.token,
         ]
       )
     )

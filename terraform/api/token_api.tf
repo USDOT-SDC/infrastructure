@@ -51,27 +51,3 @@ resource "aws_api_gateway_integration" "token" {
 #     "application/json" = "Empty"
 #   }
 # }
-
-# === REST API Deployment for token Resource ===
-# To properly capture all REST API configuration in a deployment, 
-# this resource must have triggers on all prior Terraform resources 
-# that manage resources/paths, methods, integrations, etc.
-resource "aws_api_gateway_deployment" "token" {
-  rest_api_id = aws_api_gateway_rest_api.api.id
-  triggers = {
-    redeployment = sha1(
-      jsonencode(
-        [
-          aws_api_gateway_resource.token,
-          aws_api_gateway_method.token,
-          aws_api_gateway_integration.token,
-          # aws_api_gateway_integration_response.token,
-          # aws_api_gateway_method_response.token
-        ]
-      )
-    )
-  }
-  lifecycle {
-    create_before_destroy = true
-  }
-}
