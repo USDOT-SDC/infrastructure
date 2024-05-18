@@ -16,3 +16,11 @@ resource "aws_lambda_function" "token" {
   depends_on       = [data.archive_file.token_lambda_deployment_package]
   tags             = local.common_tags
 }
+
+resource "aws_lambda_permission" "token" {
+  function_name = aws_lambda_function.token.function_name
+  statement_id  = "allow_api_gateway"
+  action        = "lambda:InvokeFunction"
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.api.execution_arn}/*"
+}
