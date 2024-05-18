@@ -32,9 +32,11 @@ def sts_client() -> client:
 def get_uuid() -> str:
     return str(uuid.uuid4())
 
+
 def json_converter(o):
   if isinstance(o, datetime.datetime):
     return o.__str__()
+
 
 def lambda_handler(event: dict, context: dict) -> dict[str, Any]:
 
