@@ -59,11 +59,10 @@ resource "aws_api_gateway_deployment" "api" {
   }
 }
 
-# === REST API Usage Plans ===
-# --- Support Team ---
-resource "aws_api_gateway_usage_plan" "support_team" {
-  name        = "api_support_team"
-  description = "SDC API Usage Plan for the Support Team"
+# === REST API Usage Plans & Keys ===
+resource "aws_api_gateway_usage_plan" "api" {
+  name        = "api_usage_plan"
+  description = "SDC API Usage Plan for all API users"
 
   api_stages {
     api_id = aws_api_gateway_rest_api.api.id
@@ -82,46 +81,14 @@ resource "aws_api_gateway_usage_plan" "support_team" {
   }
 }
 
-# --- Data Providers ---
-resource "aws_api_gateway_usage_plan" "data_providers" {
-  name        = "api_data_providers"
-  description = "SDC API Usage Plan for Data Providers"
-
-  api_stages {
-    api_id = aws_api_gateway_rest_api.api.id
-    stage  = aws_api_gateway_stage.v1.stage_name
-  }
-
-  quota_settings {
-    limit  = 1000000
-    offset = 0
-    period = "MONTH"
-  }
-
-  throttle_settings {
-    burst_limit = 1000
-    rate_limit  = 10000
-  }
+resource "aws_api_gateway_api_key" "user" {
+  for_each = local.api_users
+  name = "api_user_${each.key}"
 }
 
-# --- Research Teams ---
-resource "aws_api_gateway_usage_plan" "research_teams" {
-  name        = "api_research_teams"
-  description = "SDC API Usage Plan for the Research Teams"
-
-  api_stages {
-    api_id = aws_api_gateway_rest_api.api.id
-    stage  = aws_api_gateway_stage.v1.stage_name
-  }
-
-  quota_settings {
-    limit  = 1000000
-    offset = 0
-    period = "MONTH"
-  }
-
-  throttle_settings {
-    burst_limit = 1000
-    rate_limit  = 10000
-  }
+resource "aws_api_gateway_usage_plan_key" "user" {
+  for_each = local.api_users
+  key_id        = aws_api_gateway_api_key.user[each.key].id
+  key_type      = "API_KEY"
+  usage_plan_id = aws_api_gateway_usage_plan.api.id
 }

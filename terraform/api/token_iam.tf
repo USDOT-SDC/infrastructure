@@ -25,7 +25,7 @@ resource "aws_iam_role" "token" {
             "Sid" : "AllowListRoleTags",
             "Effect" : "Allow",
             "Action" : "iam:ListRoleTags",
-            "Resource" : "arn:aws:iam::${var.common.account_id}:role/user_*"
+            "Resource" : "arn:aws:iam::${var.common.account_id}:role/api_user_*"
           }
         ]
       }
@@ -59,4 +59,59 @@ resource "aws_iam_role" "token" {
     )
   }
   tags = local.common_tags
+}
+
+
+resource "aws_iam_role" "user" {
+  for_each = local.api_users
+  name = "api_user_${each.key}"
+  assume_role_policy = jsonencode(
+    {
+      "Version" : "2012-10-17",
+      "Statement" : [
+        {
+          "Effect" : "Allow",
+          "Principal" : {
+            "AWS" : "arn:aws:sts::${var.common.account_id}:assumed-role/${aws_iam_role.token.name}/${aws_lambda_function.token.function_name}"
+          },
+          "Action" : "sts:AssumeRole"
+        }
+      ]
+    }
+  )
+  # managed_policy_arns = [
+  #   "arn:aws:iam::aws:policy/AdministratorAccess",
+  # ]
+  tags = merge(
+    { "pin" = "Update this to an int value" },
+    local.common_tags
+  )
+  lifecycle {
+    ignore_changes = [ tags["pin"], ]
+  }
+}
+
+resource "aws_iam_role" "user_jussing" {
+  name = "user_jussing"
+  assume_role_policy = jsonencode(
+    {
+      "Version" : "2012-10-17",
+      "Statement" : [
+        {
+          "Effect" : "Allow",
+          "Principal" : {
+            "AWS" : "arn:aws:sts::${var.common.account_id}:assumed-role/${aws_iam_role.token.name}/${aws_lambda_function.token.function_name}"
+          },
+          "Action" : "sts:AssumeRole"
+        }
+      ]
+    }
+  )
+  managed_policy_arns = [
+    "arn:aws:iam::aws:policy/AdministratorAccess",
+  ]
+  tags = merge(
+    { "pin" = "1234" },
+    local.common_tags
+  )
 }
