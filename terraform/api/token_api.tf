@@ -18,7 +18,7 @@ resource "aws_api_gateway_method" "token" {
   api_key_required = true
   request_parameters = {
     "method.request.querystring.username" = true
-    "method.request.querystring.pin"      = true
+    "method.request.querystring.user_key" = true
   }
 }
 

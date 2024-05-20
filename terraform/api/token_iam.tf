@@ -61,10 +61,18 @@ resource "aws_iam_role" "token" {
   tags = local.common_tags
 }
 
+resource "random_string" "role_key" {
+  for_each    = local.api_users
+  length      = 40
+  min_upper   = 4
+  min_lower   = 4
+  min_numeric = 4
+  special     = false
+}
 
 resource "aws_iam_role" "user" {
   for_each = local.api_users
-  name = "api_user_${each.key}"
+  name     = "api_user_${each.key}"
   assume_role_policy = jsonencode(
     {
       "Version" : "2012-10-17",
@@ -80,10 +88,10 @@ resource "aws_iam_role" "user" {
     }
   )
   tags = merge(
-    { "pin" = "Update this tag value to an int (0000-9999)" },
+    { "key" = random_string.role_key[each.key].result },
     local.common_tags
   )
   lifecycle {
-    ignore_changes = [ tags["pin"], ]
+    ignore_changes = [tags["key"], ]
   }
 }

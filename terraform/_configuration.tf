@@ -17,6 +17,10 @@ terraform {
       source  = "hashicorp/local"
       version = "~> 2.5"
     }
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.6"
+    }
   }
   backend "s3" {
     # Variables can not be used here
