@@ -24,6 +24,11 @@ module "vpc" {
   }
 }
 
+module "auto_start" {
+  source = "./auto_start"
+  common = local.common
+}
+
 module "instance-scheduler" {
   source = "./instance-scheduler"
   common = local.common
