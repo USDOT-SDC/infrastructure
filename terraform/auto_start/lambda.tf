@@ -1,3 +1,6 @@
+locals {
+  instance_auto_start_function_name = "instance_auto_start"
+}
 data "archive_file" "lambda_deployment_package" {
   type        = "zip"
   source_file = "${path.module}/src/lambda_function.py"
@@ -5,7 +8,7 @@ data "archive_file" "lambda_deployment_package" {
 }
 
 resource "aws_lambda_function" "auto_start" {
-  function_name    = "instance_auto_start"
+  function_name    = local.instance_auto_start_function_name
   description      = "Function to start EC2 instances from a schedule"
   filename         = data.archive_file.lambda_deployment_package.output_path
   source_code_hash = data.archive_file.lambda_deployment_package.output_base64sha256
@@ -16,9 +19,10 @@ resource "aws_lambda_function" "auto_start" {
   depends_on       = [data.archive_file.lambda_deployment_package]
   environment {
     variables = {
-      ENV            = var.common.environment
-      REGION         = var.common.region
-      DYNAMODB_TABLE = aws_dynamodb_table.auto_start.name
+      ENV                   = var.common.environment
+      REGION                = var.common.region
+      DDBT_AUTO_START       = aws_dynamodb_table.auto_start.name
+      DDBT_MAINTENANCE_WINDOW = aws_dynamodb_table.maintenance_windows.name
     }
   }
   tags = local.tags
@@ -55,33 +59,46 @@ resource "aws_iam_role" "auto_start" {
         Version : "2012-10-17",
         Statement : [
           {
-            Sid : "Parameters",
-            Effect : "Allow",
-            Action : "ssm:GetParameter",
-            Resource : "*"
-          },
-          {
-            Sid : "Buckets",
-            Effect : "Allow",
-            Action : "s3:*",
-            Resource : "*"
-          },
-          {
-            Sid : "Instances",
-            Effect : "Allow",
-            Action : "ec2:*",
-            Resource : "*"
-          },
-          {
+            Sid : "ReadOnlymaintenanceWindows",
             Effect : "Allow",
             Action : [
-              "logs:CreateLogGroup",
-              "logs:CreateLogStream",
-              "logs:PutLogEvents",
-              "logs:PutMetricFilter",
-              "logs:PutRetentionPolicy"
+              "dynamodb:GetItem",
+              "dynamodb:BatchGetItem",
+              "dynamodb:Scan",
+              "dynamodb:Query",
+              "dynamodb:ConditionCheckItem"
             ],
-            Resource : "*"
+            Resource : [
+              aws_dynamodb_table.auto_start.arn,
+              aws_dynamodb_table.maintenance_windows.arn,
+            ]
+          },
+          {
+            Sid : "DescribeStartInstances",
+            Effect : "Allow",
+            Action : [
+              "ec2:DescribeInstances",
+              "ec2:StartInstances"
+            ]
+            Resource : "arn:aws:ec2:*:*:instance/*"
+          },
+          {
+            Sid : "CreateLogGroup"
+            Effect : "Allow",
+            Action : "logs:CreateLogGroup",
+            Resource : "arn:aws:logs:region:${var.common.account_id}:*"
+          },
+
+          {
+            Sid : "Logging"
+            Effect : "Allow",
+            Action : [
+              "logs:CreateLogStream",
+              "logs:PutLogEvents"
+            ],
+            Resource : [
+              "arn:aws:logs:region:${var.common.account_id}:log-group:/aws/lambda/${local.instance_auto_start_function_name}:*"
+            ]
           }
         ]
       }
