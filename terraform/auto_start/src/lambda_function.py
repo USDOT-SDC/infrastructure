@@ -30,14 +30,14 @@ def get_region() -> str:
     return os.getenv("REGION", "us-east-1")
 
 
-def get_ddbt_auto_start() -> str:
+def get_ddbt_auto_starts() -> str:
     """
     gets DDBT_AUTO_START from sys environment vars
 
     Returns:
         str: the auto-start DynamoDB table name
     """
-    return os.getenv("DDBT_AUTO_START", "instance_auto_start")
+    return os.getenv("DDBT_AUTO_STARTS", "instance_auto_starts")
 
 
 def get_ddbt_maintenance_windows() -> str:
@@ -47,7 +47,7 @@ def get_ddbt_maintenance_windows() -> str:
     Returns:
         str: the maintenance windows DynamoDB table name
     """
-    return os.getenv("DDBT_MAINTENANCE_WINDOW", "instance_maintenance_windows")
+    return os.getenv("DDBT_MAINTENANCE_WINDOWS", "instance_maintenance_windows")
 
 
 def round_dt(dt: datetime, minutes: int = 15) -> datetime:
@@ -436,7 +436,7 @@ class ProcessAutoStarts:
             region_name (str, optional): AWS region. Defaults to the result of get_region().
         """
         self.ec2_manager = EC2Manager()
-        self.as_client = DynamoDBClient(get_ddbt_auto_start(), region_name)
+        self.as_client = DynamoDBClient(get_ddbt_auto_starts(), region_name)
         self.now_utc: datetime = now_utc if now_utc else datetime.now(tz=timezone.utc)
 
     def get_start_instances(self, auto_starts: list) -> list:
