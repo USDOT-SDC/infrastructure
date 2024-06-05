@@ -18,23 +18,26 @@ resource "aws_dynamodb_table_item" "auto_start_example" {
   item = jsonencode(
     {
       "instance_id" : {
-        "S" : "i-0daca5caa7c550bab_example"
+        "S" : "i-0daca5caa7c550bab"
       },
       "cron_expressions" : {
         "L" : [
           {
-            "S" : "55 * * * *"
+            "S" : "0 18 * * 6"
           },
           {
-            "S" : "5 * * * *"
+            "S" : "0 0 * * 0"
           }
         ]
       },
       "name" : {
-        "S" : "ECSDWART01_SchemaExample"
+        "S" : "ECSDWART01"
       },
       "timezone" : {
         "S" : "EST"
+      },
+      "terraform_configured" : { # lets everyone know this item is managed by Terraform
+        "BOOL" : true
       }
     }
   )
@@ -54,23 +57,51 @@ resource "aws_dynamodb_table" "maintenance_windows" {
 }
 
 
-resource "aws_dynamodb_table_item" "maintenance_windows_example" {
+resource "aws_dynamodb_table_item" "maintenance_window_saturday_maint" {
   table_name = aws_dynamodb_table.maintenance_windows.name
   hash_key   = aws_dynamodb_table.maintenance_windows.hash_key
 
   item = jsonencode(
     {
       "maintenance_window_id" : {
-        "S" : "Tuesday09_SchemaExample"
+        "S" : "SaturdayMaintenance"
       },
       "cron_expression" : {
-        "S" : "0 9 * * 2"
+        "S" : "0 18 * * 6"
       },
       "duration" : {
-        "S" : "8:00"
+        "S" : "6:00"
       },
       "timezone" : {
         "S" : "EST"
+      },
+      "terraform_configured" : { # lets everyone know this item is managed by Terraform
+        "BOOL" : true
+      }
+    }
+  )
+}
+
+resource "aws_dynamodb_table_item" "maintenance_window_sunday_scan" {
+  table_name = aws_dynamodb_table.maintenance_windows.name
+  hash_key   = aws_dynamodb_table.maintenance_windows.hash_key
+
+  item = jsonencode(
+    {
+      "maintenance_window_id" : {
+        "S" : "SundayScan"
+      },
+      "cron_expression" : {
+        "S" : "0 0 * * 0"
+      },
+      "duration" : {
+        "S" : "6:00"
+      },
+      "timezone" : {
+        "S" : "EST"
+      },
+      "terraform_configured" : { # lets everyone know this item is managed by Terraform
+        "BOOL" : true
       }
     }
   )
