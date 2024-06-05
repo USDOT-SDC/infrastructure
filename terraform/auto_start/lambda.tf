@@ -47,10 +47,10 @@ resource "aws_lambda_function" "auto_start" {
   }
   environment {
     variables = {
-      ENV                     = var.common.environment
-      REGION                  = var.common.region
-      DDBT_AUTO_START         = aws_dynamodb_table.auto_starts.name
-      DDBT_MAINTENANCE_WINDOW = aws_dynamodb_table.maintenance_windows.name
+      ENV                      = var.common.environment
+      REGION                   = var.common.region
+      DDBT_AUTO_STARTS         = aws_dynamodb_table.auto_starts.name
+      DDBT_MAINTENANCE_WINDOWS = aws_dynamodb_table.maintenance_windows.name
     }
   }
   tags = local.tags
@@ -138,12 +138,12 @@ resource "aws_iam_role" "auto_start" {
 resource "aws_cloudwatch_event_rule" "auto_start" {
   name                = "auto_start"
   description         = "Triggers the instance_auto_start Lambda"
-  schedule_expression = "cron(0/15 * * * ? *)" 
-                        # at minute 0/every 15 minutes, every hour, day of the month, month, day of the week and year
-                        # (Min Hr DoM M DoW Y)
-                        # You can't use * in both the Day-of-month and Day-of-week fields. 
-                        # If you use it in one, you must use ? in the other.
-  tags                = local.tags
+  schedule_expression = "cron(0/15 * * * ? *)"
+  # at minute 0/every 15 minutes, every hour, day of the month, month, day of the week and year
+  # (Min Hr DoM M DoW Y)
+  # You can't use * in both the Day-of-month and Day-of-week fields. 
+  # If you use it in one, you must use ? in the other.
+  tags = local.tags
 }
 
 resource "aws_cloudwatch_event_target" "auto_start" {
