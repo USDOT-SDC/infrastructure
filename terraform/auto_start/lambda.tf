@@ -49,7 +49,7 @@ resource "aws_lambda_function" "auto_start" {
     variables = {
       ENV                     = var.common.environment
       REGION                  = var.common.region
-      DDBT_AUTO_START         = aws_dynamodb_table.auto_start.name
+      DDBT_AUTO_START         = aws_dynamodb_table.auto_starts.name
       DDBT_MAINTENANCE_WINDOW = aws_dynamodb_table.maintenance_windows.name
     }
   }
@@ -97,7 +97,7 @@ resource "aws_iam_role" "auto_start" {
               "dynamodb:ConditionCheckItem"
             ],
             Resource : [
-              aws_dynamodb_table.auto_start.arn,
+              aws_dynamodb_table.auto_starts.arn,
               aws_dynamodb_table.maintenance_windows.arn,
             ]
           },
