@@ -74,7 +74,7 @@ resource "aws_vpc_endpoint_policy" "dynamodb_gateway" {
           "Resource" : "*",
           "Condition" : {
             "NumericLessThan" : {
-              "s3:TlsVersion" : 1.2
+              "dynamodb:TlsVersion" : 1.2
             }
           }
         }
