@@ -1,3 +1,13 @@
+module "api" {
+  module_name      = "API"
+  module_slug      = "api"
+  source           = "./api"
+  common           = local.common
+  aws_route53_zone = { public = aws_route53_zone.public }
+  fqdn             = local.fqdn
+  certificates     = local.certificates
+}
+
 module "vpc" {
   source = "./vpc"
   common = {
@@ -16,6 +26,11 @@ module "vpc" {
   }
 }
 
+module "auto_start" {
+  source = "./auto_start"
+  common = local.common
+}
+
 module "instance-scheduler" {
   source = "./instance-scheduler"
   common = local.common
@@ -28,6 +43,7 @@ module "log4sdc" {
 }
 
 module "utilities" {
-  source = "./utilities"
-  common = local.common
+  source                             = "./utilities"
+  common                             = local.common
+  research_teams_vpc_endpoint_lambda = local.research_teams_vpc_endpoint_lambda
 }

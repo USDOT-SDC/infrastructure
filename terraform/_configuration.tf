@@ -3,7 +3,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.48"
+      version = "~> 5.53"
     }
     null = {
       source  = "hashicorp/null"
@@ -16,6 +16,10 @@ terraform {
     local = {
       source  = "hashicorp/local"
       version = "~> 2.5"
+    }
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.6"
     }
   }
   backend "s3" {

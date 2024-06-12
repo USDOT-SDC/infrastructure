@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<dictionary>
+  <item>
+    <key>
+      <string>d19a7905-8aad-4271-aca9-817669b94a1d.Arguments of git command to run</string>
+    </key>
+    <value>
+      <string>fetch --all</string>
+    </value>
+  </item>
+  <item>
+    <key>
+      <string>d19a7905-8aad-4271-aca9-817669b94a1d.Fetch all submodules</string>
+    </key>
+    <value>
+      <string>false</string>
+    </value>
+  </item>
+  <item>
+    <key>
+      <string>d19a7905-8aad-4271-aca9-817669b94a1d.Fetch every (seconds) - set to 0 to disable</string>
+    </key>
+    <value>
+      <string>360</string>
+    </value>
+  </item>
+  <item>
+    <key>
+      <string>d19a7905-8aad-4271-aca9-817669b94a1d.Refresh view after fetch</string>
+    </key>
+    <value>
+      <string>true</string>
+    </value>
+  </item>
+</dictionary>

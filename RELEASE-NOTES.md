@@ -4,6 +4,12 @@ We’re now releasing SDC Infrastructure: Version 0.4.2.
 # Get This Release
 ​To deploy this release, select this version's tag and follow the instructions in the Deployment Plan.
 
+## Version 0.5.0 (2024-06-07)
+### Changes
+- Add new token generator API
+- Add Instance Auto-start Lambda and DynamoDB tables for auto-starts and maintenance-windows
+- Add VPC Endpoint for DynamoDB Gateway
+
 ## Version 0.4.4 (2023-05-22)
 ### Changes
 - Update instance scheduler to read global schedule from S3, not parameter store

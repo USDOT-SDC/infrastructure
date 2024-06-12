@@ -8,6 +8,8 @@
 **/terraform/**/*.conf
 
 # Lambda deployment packages
+**/terraform/**/deploy
+**/terraform/**/deploy/**
 **/terraform/**/src/**/deployment-package
 **/terraform/**/src/**/deployment-package/**
 **/terraform/**/src/**/*.zip
