@@ -28,8 +28,12 @@ locals {
     backup_bucket               = { id = aws_s3_bucket.backup.id }
     instance_maintenance_bucket = { id = aws_s3_bucket.instance_maintenance.id }
   }
+  secrets_path      = "../../infrastructure-secrets"
+  certificates_path = "${local.secrets_path}/certificates/${local.common.environment}"
+  certificates = {
+    external = aws_acm_certificate.external
+  }
   research_teams_vpc_endpoint_lambda = data.terraform_remote_state.research_teams.outputs.vpc_endpoint_lambda.dns_entry[0].dns_name
-  portal2_backend_route53_zone       = data.terraform_remote_state.portal2.outputs.backend.route53_zone
   default_tags = {
     "Repository URL" = "https://github.com/USDOT-SDC/"
     Repository       = "infrastructure"
@@ -37,4 +41,12 @@ locals {
     Team             = "Platform"
     Owner            = "Support Team"
   }
+  ecs_tags = { # ECS auto creates these tags. Putting them in Terraform will prevent config drift.
+    "App Support" = "Jeff.Ussing.CTR"
+    "Fed Owner"   = "Dan Morgan"
+  }
 }
+
+# variable "secrets_path" {
+#   default = "../../infrastructure-secrets"
+# }
