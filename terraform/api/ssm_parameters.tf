@@ -2,7 +2,7 @@ resource "aws_ssm_parameter" "api_users" {
   name        = "/api/users"
   description = "SDC API Users (in yaml format)"
   type        = "String"
-  value       = " "
+  value       = "- test_user"
   lifecycle {
     ignore_changes = [
       value,
