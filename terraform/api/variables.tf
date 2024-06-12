@@ -1,7 +1,9 @@
 variable "module_name" {}
 variable "module_slug" {}
 variable "common" {}
-variable "portal2_backend_route53_zone" {}
+variable "aws_route53_zone" {}
+variable "fqdn" {}
+variable "certificates" {}
 locals {
   common_tags = {
     "Module Slug" = var.module_slug
