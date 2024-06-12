@@ -36,3 +36,22 @@ output "auto_start" {
     dynamodb_tables = module.auto_start.dynamodb_tables
   }
 }
+
+output "route53_zone" {
+  value = {
+    public = {
+      id  = aws_route53_zone.public.id
+      arn = aws_route53_zone.public.arn
+    }
+  }
+}
+
+output "certificates" {
+  value = {
+    external = {
+      id          = aws_acm_certificate.external.id
+      arn         = aws_acm_certificate.external.arn
+      domain_name = aws_acm_certificate.external.domain_name
+    }
+  }
+}
