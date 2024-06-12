@@ -5,15 +5,9 @@ resource "aws_api_gateway_rest_api" "api" {
   tags        = local.common_tags
 }
 
-# === REST API Domain Name ===
-data "aws_acm_certificate" "external" {
-  domain   = local.fqdn
-  statuses = ["ISSUED"]
-}
-
 resource "aws_api_gateway_domain_name" "api" {
-  domain_name     = "api.${local.fqdn}"
-  certificate_arn = data.aws_acm_certificate.external.arn
+  domain_name     = "api.${var.fqdn}"
+  certificate_arn = var.certificates.external.arn
 }
 
 # === REST API Domain Name Mapping ===
