@@ -11,37 +11,37 @@ resource "aws_dynamodb_table" "auto_starts" {
   tags = local.tags
 }
 
-resource "aws_dynamodb_table_item" "auto_start_example" {
-  table_name = aws_dynamodb_table.auto_starts.name
-  hash_key   = aws_dynamodb_table.auto_starts.hash_key
+# resource "aws_dynamodb_table_item" "auto_start_example" {
+#   table_name = aws_dynamodb_table.auto_starts.name
+#   hash_key   = aws_dynamodb_table.auto_starts.hash_key
 
-  item = jsonencode(
-    {
-      "instance_id" : {
-        "S" : "i-0daca5caa7c550bab"
-      },
-      "cron_expressions" : {
-        "L" : [
-          {
-            "S" : "0 18 * * 6"
-          },
-          {
-            "S" : "0 0 * * 0"
-          }
-        ]
-      },
-      "name" : {
-        "S" : "ECSDWART01"
-      },
-      "timezone" : {
-        "S" : "EST"
-      },
-      "terraform_configured" : { # lets everyone know this item is managed by Terraform
-        "BOOL" : true
-      }
-    }
-  )
-}
+#   item = jsonencode(
+#     {
+#       "instance_id" : {
+#         "S" : "i-0daca5caa7c550bab"
+#       },
+#       "cron_expressions" : {
+#         "L" : [
+#           {
+#             "S" : "0 18 * * 6"
+#           },
+#           {
+#             "S" : "0 0 * * 0"
+#           }
+#         ]
+#       },
+#       "name" : {
+#         "S" : "ECSDWART01"
+#       },
+#       "timezone" : {
+#         "S" : "EST"
+#       },
+#       "terraform_configured" : { # lets everyone know this item is managed by Terraform
+#         "BOOL" : true
+#       }
+#     }
+#   )
+# }
 
 resource "aws_dynamodb_table" "maintenance_windows" {
   name         = "instance_maintenance_windows"
