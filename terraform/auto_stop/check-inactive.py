@@ -6,7 +6,7 @@ import pytz
 import ctypes
 
 # Define the DynamoDB table name
-TABLE_NAME = 'testing-maintenance-windows'
+TABLE_NAME = 'instance_maintenance_windows'
 
 # Initialize a session using Amazon DynamoDB
 dynamodb = boto3.resource('dynamodb')
