@@ -1,11 +1,50 @@
 module "api" {
-  module_name      = "API"
-  module_slug      = "api"
-  source           = "./api"
-  common           = local.common
-  aws_route53_zone = { public = aws_route53_zone.public }
-  fqdn             = local.fqdn
-  certificates     = local.certificates
+  module_name = "API"
+  module_slug = "api"
+  source      = "./api"
+  common      = local.common
+  route53_zones = {
+    public  = aws_route53_zone.public
+    private = aws_route53_zone.private
+  }
+  pub_fqdn     = local.pub_fqdn
+  certificates = local.certificates
+}
+
+module "auto_start" {
+  source = "./auto_start"
+  common = local.common
+}
+
+# module "gitlab" {
+#   module_name = "GitLab"
+#   module_slug = "gitlab"
+#   source      = "./gitlab"
+#   common      = local.common
+#   route53_zones = {
+#     public  = aws_route53_zone.public
+#     private = aws_route53_zone.private
+#   }
+#   pri_fqdn     = local.pri_fqdn
+#   certificates = local.certificates
+#   default_tags = local.default_tags
+# }
+
+module "instance-scheduler" {
+  source = "./instance-scheduler"
+  common = local.common
+}
+
+module "utilities" {
+  source                             = "./utilities"
+  common                             = local.common
+  research_teams_vpc_endpoint_lambda = local.research_teams_vpc_endpoint_lambda
+}
+
+module "log4sdc" {
+  source       = "./utilities/log4sdc"
+  common       = local.common
+  default_tags = local.default_tags
 }
 
 module "vpc" {
@@ -24,26 +63,4 @@ module "vpc" {
     terraform_bucket = aws_s3_bucket.terraform.id
     backup_bucket    = aws_s3_bucket.backup.id
   }
-}
-
-module "auto_start" {
-  source = "./auto_start"
-  common = local.common
-}
-
-module "instance-scheduler" {
-  source = "./instance-scheduler"
-  common = local.common
-}
-
-module "log4sdc" {
-  source       = "./utilities/log4sdc"
-  common       = local.common
-  default_tags = local.default_tags
-}
-
-module "utilities" {
-  source                             = "./utilities"
-  common                             = local.common
-  research_teams_vpc_endpoint_lambda = local.research_teams_vpc_endpoint_lambda
 }
