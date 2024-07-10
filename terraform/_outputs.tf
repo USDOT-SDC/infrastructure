@@ -43,6 +43,10 @@ output "route53_zone" {
       id  = aws_route53_zone.public.id
       arn = aws_route53_zone.public.arn
     }
+    private = {
+      id  = aws_route53_zone.private.id
+      arn = aws_route53_zone.private.arn
+    }
   }
 }
 
