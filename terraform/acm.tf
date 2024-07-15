@@ -13,8 +13,8 @@ resource "aws_acm_certificate" "external" {
 # domain name: {dev/prod}.sdc.dot.gov
 # domains:  gitlab.{dev/prod}.sdc.dot.gov, guacamole.{dev/prod}.sdc.dot.gov, 
 #           sub1.{dev/prod}.sdc.dot.gov, sub2.{dev/prod}.sdc.dot.gov, 
-# resource "aws_acm_certificate" "internal" {
-#   private_key       = file("${local.certificates_path}/internal/Private.key")
-#   certificate_body  = file("${local.certificates_path}/internal/ServerCertificate.crt")
-#   certificate_chain = file("${local.certificates_path}/internal/Intermediate.crt")
-# }
+resource "aws_acm_certificate" "internal" {
+  private_key       = file("${local.certificates_path}/internal/Private.key")
+  certificate_body  = file("${local.certificates_path}/internal/ServerCertificate.crt")
+  certificate_chain = file("${local.certificates_path}/internal/Intermediate.crt")
+}
