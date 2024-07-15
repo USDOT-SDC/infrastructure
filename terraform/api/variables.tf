@@ -1,8 +1,8 @@
 variable "module_name" {}
 variable "module_slug" {}
 variable "common" {}
-variable "aws_route53_zone" {}
-variable "fqdn" {}
+variable "route53_zones" {}
+variable "pub_fqdn" {}
 variable "certificates" {}
 locals {
   common_tags = {

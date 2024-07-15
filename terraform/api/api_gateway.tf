@@ -6,7 +6,7 @@ resource "aws_api_gateway_rest_api" "api" {
 }
 
 resource "aws_api_gateway_domain_name" "api" {
-  domain_name     = "api.${var.fqdn}"
+  domain_name     = "api.${var.pub_fqdn}"
   certificate_arn = var.certificates.external.arn
 }
 

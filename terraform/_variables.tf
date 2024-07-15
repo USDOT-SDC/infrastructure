@@ -3,9 +3,10 @@ locals {
   # use caution when making changes to local.common
   # local.common is output to tfstate and used by other configurations
   common = {
-    account_id  = nonsensitive(data.aws_ssm_parameter.account_id.value)
-    region      = nonsensitive(data.aws_ssm_parameter.region.value)
-    environment = nonsensitive(data.aws_ssm_parameter.environment.value)
+    configuration_slug = "infrs"
+    account_id         = nonsensitive(data.aws_ssm_parameter.account_id.value)
+    region             = nonsensitive(data.aws_ssm_parameter.region.value)
+    environment        = nonsensitive(data.aws_ssm_parameter.environment.value)
     network = {
       vpc = data.aws_vpc.default
       subnets = concat(
@@ -20,6 +21,7 @@ locals {
       subnet_five            = module.vpc.subnets_infrastructure[2]
       subnet_six             = module.vpc.subnets_infrastructure[3]
       default_security_group = data.aws_security_group.default
+      fms_security_group     = data.aws_security_group.fms
       transit_gateway        = data.aws_ec2_transit_gateway.default
     }
     support_email               = nonsensitive(data.aws_ssm_parameter.support_email.value)
