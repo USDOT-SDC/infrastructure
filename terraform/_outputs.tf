@@ -57,5 +57,10 @@ output "certificates" {
       arn         = aws_acm_certificate.external.arn
       domain_name = aws_acm_certificate.external.domain_name
     }
+    internal = {
+      id          = aws_acm_certificate.internal.id
+      arn         = aws_acm_certificate.internal.arn
+      domain_name = aws_acm_certificate.internal.domain_name
+    }
   }
 }
