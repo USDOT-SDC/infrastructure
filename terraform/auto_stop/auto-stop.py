@@ -82,7 +82,7 @@ def shutdown_computer():
     """
     logging.info('shutting down')
     time.sleep(3)
-    #os.system('shutdown /s /t 1')
+    os.system('shutdown /s /t 1')
 
 def script_running():
     processes = [
