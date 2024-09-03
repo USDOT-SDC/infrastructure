@@ -1,5 +1,6 @@
 ### repo specific ignores ###
 **/tfplan*
+terraform/auto_stop/auto-stop.zip
 
 # Keep the example file
 !example.auto.tfvars

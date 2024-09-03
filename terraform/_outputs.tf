@@ -43,15 +43,22 @@ output "route53_zone" {
       id  = aws_route53_zone.public.id
       arn = aws_route53_zone.public.arn
     }
+    private = {
+      id  = aws_route53_zone.private.id
+      arn = aws_route53_zone.private.arn
+    }
   }
 }
 
 output "certificates" {
   value = {
     external = {
-      id          = aws_acm_certificate.external.id
       arn         = aws_acm_certificate.external.arn
       domain_name = aws_acm_certificate.external.domain_name
+    }
+    internal = {
+      arn         = aws_acm_certificate.internal.arn
+      domain_name = aws_acm_certificate.internal.domain_name
     }
   }
 }
