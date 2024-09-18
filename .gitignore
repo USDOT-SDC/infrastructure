@@ -1,4 +1,5 @@
 ### repo specific ignores ###
+sandbox*.*
 **/tfplan*
 terraform/auto_stop/auto-stop.zip
 
