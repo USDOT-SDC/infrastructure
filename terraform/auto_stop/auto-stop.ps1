@@ -1,12 +1,38 @@
 <#
 .Description
+Logs the message to the log file.
+Returns: none
+#>
+function Write-Log {
+    param (
+        [Parameter(Mandatory = $true)]
+        [string]$Message,
+        
+        [Parameter(Mandatory = $false)]
+        [string]$LogFilePath = "auto-stop.log"
+    )
+
+    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    $logEntry = "$timestamp - $Message"
+    
+    try {
+        # Append the log entry to the specified log file
+        Add-Content -Path $LogFilePath -Value $logEntry
+    }
+    catch {
+        Write-Host "Failed to write to log file: $_" -ForegroundColor Red
+    }
+}
+
+<#
+.Description
 Checks the running processes for Python and R scripts.
 Exclues scripts with vscode in the path, such as the black formater.
 Returns: true|false
 #>
 function Check-ScriptRunning {
     param (
-        [string]$scriptType  # Accepts 'python' or 'r'
+        [string]$scriptType  # Accepts 'Python' or 'R'
     )
 
     switch ($scriptType.ToLower()) {
@@ -17,7 +43,9 @@ function Check-ScriptRunning {
             $processName = 'Rscript'
         }
         default {
-            Write-Host "Invalid script type. Please specify 'python' or 'r'."
+            $msg = "Invalid script type. Please specify 'python' or 'r'."
+            Write-Host $msg
+            Write-Log -Message $msg
             return $false
         }
     }
@@ -29,10 +57,16 @@ function Check-ScriptRunning {
         $filteredProcesses = $processes | Where-Object { $_.CommandLine -notlike '*vscode*' }
 
         if ($filteredProcesses) {
+            $msg = "A $scriptType script is running."
+            Write-Host $msg
+            Write-Log -Message $msg
             return $true
         }
     }
 
+    $msg = "No $scriptType scripts are running."
+    Write-Host $msg
+    Write-Log -Message $msg
     return $false
 }
 
@@ -66,7 +100,9 @@ function Get-MinIdleTimeInSecondsOfActiveUsers {
                 $logonTime = $matches[6]
 
                 # Debug: Print the parsed user information
-                # Write-Host "User: $username, SessionID: $sessionID, State: $state, IdleTime: $idleTime"
+                $msg = "User: $username, State: $state, IdleTime: $idleTime"
+                Write-Host $msg
+                Write-Log $msg
 
                 # Check if the state is neither 'Disc' nor 'Idle'
                 if ($state -ne 'Disc' -and $state -ne 'Idle') {
@@ -76,7 +112,9 @@ function Get-MinIdleTimeInSecondsOfActiveUsers {
                         $idleTimeInSeconds = $timeSpan.TotalSeconds
 
                         # Debug: Print the idle time in seconds
-                        # Write-Host "Idle time (seconds) of user ${username}: ${idleTimeInSeconds}"
+                        $msg = "Idle time (seconds) of user ${username}: ${idleTimeInSeconds}"
+                        Write-Host $msg
+                        Write-Log $msg
 
                         # Find the minimum idle time
                         if ($idleTimeInSeconds -lt $minIdleTimeInSeconds) {
@@ -88,14 +126,20 @@ function Get-MinIdleTimeInSecondsOfActiveUsers {
         }
 
         if ($minIdleTimeInSeconds -eq [double]::MaxValue) {
-            # Write-Host "No active users found."
+            $msg = "No active users found."
+            Write-Host $msg
+            Write-Log $msg
             return $null
         } else {
-            # Write-Host "Minimum idle time (seconds) of active users: $minIdleTimeInSeconds"
+            $msg = "Minimum idle time (seconds) of active users: $minIdleTimeInSeconds"
+            Write-Host $msg
+            Write-Log $msg
             return $minIdleTimeInSeconds
         }
     } else {
-        # Write-Host "No users are logged in."
+        $msg = "No users are logged in."
+        Write-Host $msg
+        Write-Log $msg
         return $null
     }
 }
@@ -116,27 +160,38 @@ function Convert-IdleTimeToTimeSpan {
             return New-TimeSpan -Minutes 0
         }
 
-        if ($idleTime -match '(\d+)\+(\d+):(\d+)') {  # Match format like "1+23:45" (1 day, 23 hours, 45 minutes)
+        # Match format like "1+23:45" (1 day, 23 hours, 45 minutes)
+        if ($idleTime -match '(\d+)\+(\d+):(\d+)') {
             $days = [int]$matches[1]
             $hours = [int]$matches[2]
             $minutes = [int]$matches[3]
             return New-TimeSpan -Days $days -Hours $hours -Minutes $minutes
-        } elseif ($idleTime -match '(\d+):(\d+)') {  # Match format like "23:45" (23 hours, 45 minutes)
+        }
+
+        # Match format like "23:45" (23 hours, 45 minutes)
+        elseif ($idleTime -match '(\d+):(\d+)') {
             $hours = [int]$matches[1]
             $minutes = [int]$matches[2]
             return New-TimeSpan -Hours $hours -Minutes $minutes
-        } elseif ($idleTime -match '^\d+$') {  # Match format like "45" (45 minutes)
-            return New-TimeSpan -Minutes [int]$idleTime
+        }
+
+        # Match integer-only format, like "45" (45 minutes)
+        elseif ($idleTime -match '^\d+$') {
+            $minutes = [int]$idleTime
+            return New-TimeSpan -Minutes $minutes
         } else {
-            Write-Host "Unknown idle time format: $idleTime"
+            $msg = "Unknown idle time format: $idleTime"
+            Write-Host $msg
+            Write-Log $msg
             return $null
         }
     } catch {
-        Write-Host "Failed to convert idle time: $idleTime"
+        $msg = "Failed to convert idle time: $idleTime"
+        Write-Host $msg
+        Write-Log $msg
         return $null
     }
 }
-
 
 <#
 .Description
@@ -149,18 +204,22 @@ function Get-SystemUptimeInSeconds {
 
     # Calculate the uptime in seconds
     $uptimeInSeconds = (New-TimeSpan -Start $lastBootTime).TotalSeconds
+    $uptimeInSeconds = [math]::Round($uptimeInSeconds, 0)
 
     # Return the uptime in seconds
-    return [math]::Round($uptimeInSeconds, 0)
+    $msg = "System uptime in seconds: $uptimeInSeconds"
+    Write-Host $msg
+    Write-Log $msg
+    return $uptimeInSeconds
 }
 
-$pythonRunning = Check-ScriptRunning -scriptType "python"
-$rRunning = Check-ScriptRunning -scriptType "r"
-Write-Host "Python running: $pythonRunning"
-Write-Host "R running: $rRunning"
+$pythonRunning = Check-ScriptRunning -scriptType "Python"
+$rRunning = Check-ScriptRunning -scriptType "R"
+# Write-Host "Python running: $pythonRunning"
+# Write-Host "R running: $rRunning"
 
 $minIdleTimeInSeconds = Get-MinIdleTimeInSecondsOfActiveUsers
-Write-Host "Min idle time: $minIdleTimeInSeconds"
+# Write-Host "Min idle time: $minIdleTimeInSeconds"
 
 $uptimeInSeconds = Get-SystemUptimeInSeconds
-Write-Host "Uptime in seconds: $uptimeInSeconds"
+# Write-Host "Uptime in seconds: $uptimeInSeconds"
