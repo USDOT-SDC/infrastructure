@@ -59,14 +59,14 @@ function Check-ScriptRunning {
         if ($filteredProcesses) {
             $msg = "A $scriptType script is running."
             Write-Host $msg
-            Write-Log -Message $msg
+            # Write-Log -Message $msg
             return $true
         }
     }
 
     $msg = "No $scriptType scripts are running."
     Write-Host $msg
-    Write-Log -Message $msg
+    # Write-Log -Message $msg
     return $false
 }
 
@@ -100,9 +100,9 @@ function Get-MinIdleTimeInSecondsOfActiveUsers {
                 $logonTime = $matches[6]
 
                 # Debug: Print the parsed user information
-                $msg = "User: $username, State: $state, IdleTime: $idleTime"
-                Write-Host $msg
-                Write-Log $msg
+                # $msg = "User: $username, State: $state, IdleTime: $idleTime"
+                # Write-Host $msg
+                # Write-Log $msg
 
                 # Check if the state is neither 'Disc' nor 'Idle'
                 if ($state -ne 'Disc' -and $state -ne 'Idle') {
@@ -114,7 +114,7 @@ function Get-MinIdleTimeInSecondsOfActiveUsers {
                         # Debug: Print the idle time in seconds
                         $msg = "Idle time (seconds) of user ${username}: ${idleTimeInSeconds}"
                         Write-Host $msg
-                        Write-Log $msg
+                        # Write-Log $msg
 
                         # Find the minimum idle time
                         if ($idleTimeInSeconds -lt $minIdleTimeInSeconds) {
@@ -133,7 +133,7 @@ function Get-MinIdleTimeInSecondsOfActiveUsers {
         } else {
             $msg = "Minimum idle time (seconds) of active users: $minIdleTimeInSeconds"
             Write-Host $msg
-            Write-Log $msg
+            # Write-Log $msg
             return $minIdleTimeInSeconds
         }
     } else {
@@ -209,7 +209,7 @@ function Get-SystemUptimeInSeconds {
     # Return the uptime in seconds
     $msg = "System uptime in seconds: $uptimeInSeconds"
     Write-Host $msg
-    Write-Log $msg
+    # Write-Log $msg
     return $uptimeInSeconds
 }
 
@@ -223,3 +223,61 @@ $minIdleTimeInSeconds = Get-MinIdleTimeInSecondsOfActiveUsers
 
 $uptimeInSeconds = Get-SystemUptimeInSeconds
 # Write-Host "Uptime in seconds: $uptimeInSeconds"
+
+# Are scritps running?
+if ($pythonRunning -Or $rRunning) {
+    # Yes=Do nothing
+    $msg = "Are scritps running? Yes. Do nothing."
+    Write-Host $msg
+    Write-Log $msg
+    Return
+}
+else {
+    # Are scritps running=No
+    $msg = "Are scritps running? No."
+    Write-Host $msg
+    Write-Log $msg
+    # Is a user session active?
+    if ($minIdleTimeInSeconds -eq $null) {
+        # User session active=No
+        $msg = "Is a user session active? No."
+        Write-Host $msg
+        Write-Log $msg
+        # Did system boot >= 1 hour ago?
+        if ($uptimeInSeconds -ge (60*60)) {
+            # Yes=Shutdown
+            $msg = "Did system boot >= 1 hour ago? Yes. Shutdown."
+            Write-Host $msg
+            Write-Log $msg
+            Stop-Computer -Force
+        }
+        else {
+            # No=Do nothing
+            $msg = "Did system boot >= 1 hour ago? No. Do nothing."
+            Write-Host $msg
+            Write-Log $msg
+            Return
+        }
+    }
+    else {
+        # User session active=Yes
+        $msg = "Is a user session active? Yes."
+        Write-Host $msg
+        Write-Log $msg
+        # Is min of last input >= 1 hour ago?
+        if ($minIdleTimeInSeconds -ge (60*60)) {
+            # Yes=Shutdown
+            $msg = "Min of last input >= 1 hour ago? Yes. Shutdown."
+            Write-Host $msg
+            Write-Log $msg
+            Stop-Computer -Force
+        }
+        else {
+            # No=Do nothing
+            $msg = "Min of last input >= 1 hour ago? No. Do nothing."
+            Write-Host $msg
+            Write-Log $msg
+            Return
+        }
+    }
+}
