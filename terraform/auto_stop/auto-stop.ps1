@@ -9,11 +9,13 @@ function Write-Log {
         [string]$Message,
         
         [Parameter(Mandatory = $false)]
-        [string]$LogFilePath = "auto-stop.log"
+        [string]$LogFilePath
     )
 
     $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
     $logEntry = "$timestamp - $Message"
+
+    $LogFilePath = Join-Path -Path $PSScriptRoot -ChildPath "auto-stop.log"
     
     try {
         # Append the log entry to the specified log file
@@ -30,7 +32,7 @@ Checks the running processes for Python and R scripts.
 Exclues scripts with vscode in the path, such as the black formater.
 Returns: true|false
 #>
-function Check-ScriptRunning {
+function Test-IsScriptRunning {
     param (
         [string]$scriptType  # Accepts 'Python' or 'R'
     )
@@ -57,15 +59,15 @@ function Check-ScriptRunning {
         $filteredProcesses = $processes | Where-Object { $_.CommandLine -notlike '*vscode*' }
 
         if ($filteredProcesses) {
-            $msg = "A $scriptType script is running."
-            Write-Host $msg
+            # $msg = "A $scriptType script is running."
+            # Write-Host $msg
             # Write-Log -Message $msg
             return $true
         }
     }
 
-    $msg = "No $scriptType scripts are running."
-    Write-Host $msg
+    # $msg = "No $scriptType scripts are running."
+    # Write-Host $msg
     # Write-Log -Message $msg
     return $false
 }
@@ -93,11 +95,11 @@ function Get-MinIdleTimeInSecondsOfActiveUsers {
             # Match quser output format: Username, SessionName, SessionID, State, IdleTime, LogonTime
             if ($_ -match '^\s*(\S+)\s+(\S+)\s+(\d+)\s+(\w+)\s+(\S+)\s+(.+)$') {
                 $username = $matches[1]
-                $sessionName = $matches[2]
-                $sessionID = $matches[3]
+                # $sessionName = $matches[2]
+                # $sessionID = $matches[3]
                 $state = $matches[4]
                 $idleTime = $matches[5]
-                $logonTime = $matches[6]
+                # $logonTime = $matches[6]
 
                 # Debug: Print the parsed user information
                 # $msg = "User: $username, State: $state, IdleTime: $idleTime"
@@ -112,8 +114,8 @@ function Get-MinIdleTimeInSecondsOfActiveUsers {
                         $idleTimeInSeconds = $timeSpan.TotalSeconds
 
                         # Debug: Print the idle time in seconds
-                        $msg = "Idle time (seconds) of user ${username}: ${idleTimeInSeconds}"
-                        Write-Host $msg
+                        # $msg = "Idle time (seconds) of user ${username}: ${idleTimeInSeconds}"
+                        # Write-Host $msg
                         # Write-Log $msg
 
                         # Find the minimum idle time
@@ -126,20 +128,22 @@ function Get-MinIdleTimeInSecondsOfActiveUsers {
         }
 
         if ($minIdleTimeInSeconds -eq [double]::MaxValue) {
-            $msg = "No active users found."
-            Write-Host $msg
-            Write-Log $msg
+            # $msg = "No active users found."
+            # Write-Host $msg
+            # Write-Log $msg
             return $null
-        } else {
-            $msg = "Minimum idle time (seconds) of active users: $minIdleTimeInSeconds"
-            Write-Host $msg
+        }
+        else {
+            # $msg = "Minimum idle time (seconds) of active users: $minIdleTimeInSeconds"
+            # Write-Host $msg
             # Write-Log $msg
             return $minIdleTimeInSeconds
         }
-    } else {
-        $msg = "No users are logged in."
-        Write-Host $msg
-        Write-Log $msg
+    }
+    else {
+        # $msg = "No users are logged in."
+        # Write-Host $msg
+        # Write-Log $msg
         return $null
     }
 }
@@ -179,13 +183,15 @@ function Convert-IdleTimeToTimeSpan {
         elseif ($idleTime -match '^\d+$') {
             $minutes = [int]$idleTime
             return New-TimeSpan -Minutes $minutes
-        } else {
+        }
+        else {
             $msg = "Unknown idle time format: $idleTime"
             Write-Host $msg
             Write-Log $msg
             return $null
         }
-    } catch {
+    }
+    catch {
         $msg = "Failed to convert idle time: $idleTime"
         Write-Host $msg
         Write-Log $msg
@@ -207,14 +213,145 @@ function Get-SystemUptimeInSeconds {
     $uptimeInSeconds = [math]::Round($uptimeInSeconds, 0)
 
     # Return the uptime in seconds
-    $msg = "System uptime in seconds: $uptimeInSeconds"
-    Write-Host $msg
+    # $msg = "System uptime in seconds: $uptimeInSeconds"
+    # Write-Host $msg
     # Write-Log $msg
     return $uptimeInSeconds
 }
 
-$pythonRunning = Check-ScriptRunning -scriptType "Python"
-$rRunning = Check-ScriptRunning -scriptType "R"
+<#
+.Description
+ Gets the instance maintenance windows from DynamoDB
+ Returns: Array of PS custom objects (items)
+#>
+function Get-MaintenanceWindows {
+    param (
+        [string]$TableName = 'instance_maintenance_windows',
+        [string]$Region = 'us-east-1'
+    )
+
+    # Initialize variables for scanning the table
+    $lastEvaluatedKey = $null
+    $items = @()
+
+    do {
+        # Build the AWS CLI command
+        $command = "aws dynamodb scan --table-name $TableName --region $Region"
+
+        # Append the ExclusiveStartKey to handle pagination
+        if ($lastEvaluatedKey) {
+            $exclusiveStartKeyJson = $lastEvaluatedKey | ConvertTo-Json -Compress
+            $command += " --exclusive-start-key '$exclusiveStartKeyJson'"
+        }
+
+        # Execute the AWS CLI command and capture the result
+        $response = Invoke-Expression $command | ConvertFrom-Json
+
+        # Append the items to the array
+        $items += $response.Items
+
+        # Check if there's more data to scan
+        $lastEvaluatedKey = $response.LastEvaluatedKey
+
+    } while ($lastEvaluatedKey)
+
+    $instance_maintenance_windows = @()
+
+    ForEach ($item in $items) {
+        $instance_maintenance_windows += [pscustomobject]@{
+            cron_expression = $item.cron_expression.S;
+            duration        = $item.duration.S;
+            timezone        = $item.timezone.S;
+        }
+    }
+
+    return $instance_maintenance_windows
+}
+
+<#
+.Description
+ Test if the current datetime is within any instance maintenance window (active)
+ Returns: true|false
+#>
+function Test-MaintenanceWindowActive {
+    param (
+        [Parameter(Mandatory = $true)]
+        [Array]$MaintenanceWindows
+    )
+
+    # Get the current time in UTC
+    $currentTimeUTC = [System.DateTime]::UtcNow
+
+    foreach ($window in $MaintenanceWindows) {
+        # Parse properties from the window object
+        $cronExpression = $window.cron_expression
+        $duration = [System.TimeSpan]::Parse($window.duration)
+        $timezone = $window.timezone
+
+        # Convert the current UTC time to the window's timezone
+        $timezoneInfo = [System.TimeZoneInfo]::FindSystemTimeZoneById($timezone)
+        $currentTimeInZone = [System.TimeZoneInfo]::ConvertTimeFromUtc($currentTimeUTC, $timezoneInfo)
+
+        # Manually parse the cron expression
+        $cronParts = $cronExpression -split ' '
+        if ($cronParts.Length -ne 5) {
+            $msg = "Invalid cron expression format: $cronExpression"
+            Write-Host $msg
+            Write-Log $msg
+            continue
+        }
+
+        $minute = $cronParts[0]
+        $hour = $cronParts[1]
+        $dayOfWeek = $cronParts[4]
+
+        # Check if the day of the week matches (Sunday=0, Monday=1, ..., Saturday=6)
+        if ($dayOfWeek -ne '*' -and $currentTimeInZone.DayOfWeek -ne [int]$dayOfWeek) {
+            continue  # Skip this window if the day doesn't match
+        }
+
+        # Adjust date format to match the system's output (dd-MM-yyyy HH:mm)
+        $dateFormat = "dd-MM-yyyy HH:mm"
+        $timeString = "$($currentTimeInZone.ToString('dd-MM-yyyy')) {0}:{1}" -f $hour.PadLeft(2, '0'), $minute.PadLeft(2, '0')
+
+        try {
+            $startTime = [datetime]::ParseExact($timeString, $dateFormat, [Globalization.CultureInfo]::InvariantCulture)
+        }
+        catch {
+            $msg = "Failed to parse start time: $timeString"
+            Write-Host $msg
+            Write-Log $msg
+            continue
+        }
+
+        # Calculate end time based on the duration
+        $endTime = $startTime.Add($duration)
+
+        # Check if current time falls within the maintenance window
+        if ($currentTimeInZone -ge $startTime -and $currentTimeInZone -le $endTime) {
+            # $msg = "A maintenance windows is active."
+            # Write-Host $msg
+            # Write-Log -Message $msg
+            return $true
+        }
+    }
+
+    # If no match found, return false
+    # $msg = "No maintenance windows are active."
+    # Write-Host $msg
+    # Write-Log -Message $msg
+    return $false
+}
+
+# === Get values for logic ===
+$maintenanceWindows = Get-MaintenanceWindows
+# Write-Host "MaintenanceWindows:"
+# Write-Host $maintenanceWindows
+$maintenanceWindowActive = Test-MaintenanceWindowActive -MaintenanceWindows $maintenanceWindows
+# Write-Host "MaintenanceWindowActive: $maintenanceWindowActive"
+
+$pythonRunning = Test-IsScriptRunning -scriptType "Python"
+$rRunning = Test-IsScriptRunning -scriptType "R"
 # Write-Host "Python running: $pythonRunning"
 # Write-Host "R running: $rRunning"
 
@@ -224,60 +361,77 @@ $minIdleTimeInSeconds = Get-MinIdleTimeInSecondsOfActiveUsers
 $uptimeInSeconds = Get-SystemUptimeInSeconds
 # Write-Host "Uptime in seconds: $uptimeInSeconds"
 
-# Are scritps running?
-if ($pythonRunning -Or $rRunning) {
+# === Logic ===
+# Maintenance window active?
+if ($maintenanceWindowActive) {
     # Yes=Do nothing
-    $msg = "Are scritps running? Yes. Do nothing."
+    $msg = "Maintenance window active? Yes. === Do nothing ==="
     Write-Host $msg
     Write-Log $msg
     Return
 }
 else {
-    # Are scritps running=No
+    # No
+    $msg = "Maintenance window active? No."
+    Write-Host $msg
+    Write-Log $msg
+}
+
+# Are scritps running?
+if ($pythonRunning -Or $rRunning) {
+    # Yes=Do nothing
+    $msg = "Are scritps running? Yes. === Do nothing ==="
+    Write-Host $msg
+    Write-Log $msg
+    Return
+}
+else {
+    # No
     $msg = "Are scritps running? No."
     Write-Host $msg
     Write-Log $msg
-    # Is a user session active?
-    if ($minIdleTimeInSeconds -eq $null) {
-        # User session active=No
-        $msg = "Is a user session active? No."
+}
+
+# Is a user session active?
+if ($null -eq $minIdleTimeInSeconds) {
+    # No
+    $msg = "Is a user session active? No."
+    Write-Host $msg
+    Write-Log $msg
+    # Did system boot >= 1 hour ago?
+    if ($uptimeInSeconds -ge (60 * 60)) {
+        # Yes=Shutdown
+        $msg = "Did system boot >= 1 hour ago? Yes. === Shutdown ==="
         Write-Host $msg
         Write-Log $msg
-        # Did system boot >= 1 hour ago?
-        if ($uptimeInSeconds -ge (60*60)) {
-            # Yes=Shutdown
-            $msg = "Did system boot >= 1 hour ago? Yes. Shutdown."
-            Write-Host $msg
-            Write-Log $msg
-            Stop-Computer -Force
-        }
-        else {
-            # No=Do nothing
-            $msg = "Did system boot >= 1 hour ago? No. Do nothing."
-            Write-Host $msg
-            Write-Log $msg
-            Return
-        }
+        Stop-Computer -Force
     }
     else {
-        # User session active=Yes
-        $msg = "Is a user session active? Yes."
+        # No=Do nothing
+        $msg = "Did system boot >= 1 hour ago? No. === Do nothing ==="
         Write-Host $msg
         Write-Log $msg
-        # Is min of last input >= 1 hour ago?
-        if ($minIdleTimeInSeconds -ge (60*60)) {
-            # Yes=Shutdown
-            $msg = "Min of last input >= 1 hour ago? Yes. Shutdown."
-            Write-Host $msg
-            Write-Log $msg
-            Stop-Computer -Force
-        }
-        else {
-            # No=Do nothing
-            $msg = "Min of last input >= 1 hour ago? No. Do nothing."
-            Write-Host $msg
-            Write-Log $msg
-            Return
-        }
+        Return
+    }
+}
+else {
+    # Yes
+    $msg = "Is a user session active? Yes."
+    Write-Host $msg
+    Write-Log $msg
+    # Is min of last input >= 1 hour ago?
+    if ($minIdleTimeInSeconds -ge (60 * 60)) {
+        # Yes=Shutdown
+        $msg = "Min of last input >= 1 hour ago? Yes. === Shutdown ==="
+        Write-Host $msg
+        Write-Log $msg
+        Stop-Computer -Force
+    }
+    else {
+        # No=Do nothing
+        $msg = "Min of last input >= 1 hour ago? No. === Do nothing ==="
+        Write-Host $msg
+        Write-Log $msg
+        Return
     }
 }
