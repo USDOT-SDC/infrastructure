@@ -1,8 +1,14 @@
+# Delete old auto-shutdown task
+schtasks.exe /Delete /TN "auto-shutdown" /F
+
 # Define the path to the task's XML file
 $taskXmlPath = Join-Path -Path $PSScriptRoot -ChildPath "task-schedule.xml"
+# Write-Host $taskXmlPath
 
 # Define the task name
 $taskName = "auto-stop"
 
-# Register the task using schtasks.exe with SYSTEM user to avoid password prompt
+# Delete, create/recreate and run the task with SYSTEM user to avoid password prompt
+schtasks.exe /Delete /TN $taskName /F
 schtasks.exe /Create /TN $taskName /XML $taskXmlPath /RU SYSTEM /F
+schtasks.exe /Run /TN $taskName
