@@ -15,50 +15,54 @@ resource "aws_iam_role" "token" {
       ]
     }
   )
-  inline_policy {
-    name = "allow_list_iam_role_tags"
-    policy = jsonencode(
-      {
-        "Version" : "2012-10-17",
-        "Statement" : [
-          {
-            "Sid" : "AllowListRoleTags",
-            "Effect" : "Allow",
-            "Action" : "iam:ListRoleTags",
-            "Resource" : "arn:aws:iam::${var.common.account_id}:role/api_user_*"
-          }
-        ]
-      }
-    )
-  }
-  inline_policy {
-    name = "allow_logging"
-    policy = jsonencode(
-      {
-        "Version" : "2012-10-17",
-        "Statement" : [
-          {
-            "Sid" : "AllowCreateLogGroup",
-            "Effect" : "Allow",
-            "Action" : "logs:CreateLogGroup",
-            "Resource" : "arn:aws:logs:${var.common.region}:${var.common.account_id}:*"
-          },
-          {
-            "Sid" : "AllowCreatePutLogs",
-            "Effect" : "Allow",
-            "Action" : [
-              "logs:CreateLogStream",
-              "logs:PutLogEvents"
-            ],
-            "Resource" : [
-              "arn:aws:logs:${var.common.region}:${var.common.account_id}:log-group:/aws/lambda/${local.api_token_name}:*"
-            ]
-          }
-        ]
-      }
-    )
-  }
   tags = local.common_tags
+}
+
+resource "aws_iam_role_policy" "allow_list_iam_role_tags" {
+  name = "allow_list_iam_role_tags"
+  role = aws_iam_role.token.id
+  policy = jsonencode(
+    {
+      "Version" : "2012-10-17",
+      "Statement" : [
+        {
+          "Sid" : "AllowListRoleTags",
+          "Effect" : "Allow",
+          "Action" : "iam:ListRoleTags",
+          "Resource" : "arn:aws:iam::${var.common.account_id}:role/api_user_*"
+        }
+      ]
+    }
+  )
+}
+
+resource "aws_iam_role_policy" "allow_logging" {
+  name = "allow_logging"
+  role = aws_iam_role.token.id
+  policy = jsonencode(
+    {
+      "Version" : "2012-10-17",
+      "Statement" : [
+        {
+          "Sid" : "AllowCreateLogGroup",
+          "Effect" : "Allow",
+          "Action" : "logs:CreateLogGroup",
+          "Resource" : "arn:aws:logs:${var.common.region}:${var.common.account_id}:*"
+        },
+        {
+          "Sid" : "AllowCreatePutLogs",
+          "Effect" : "Allow",
+          "Action" : [
+            "logs:CreateLogStream",
+            "logs:PutLogEvents"
+          ],
+          "Resource" : [
+            "arn:aws:logs:${var.common.region}:${var.common.account_id}:log-group:/aws/lambda/${local.api_token_name}:*"
+          ]
+        }
+      ]
+    }
+  )
 }
 
 resource "random_string" "role_key" {
