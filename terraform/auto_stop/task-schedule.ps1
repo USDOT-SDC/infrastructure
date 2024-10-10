@@ -1,6 +1,9 @@
 # Delete old auto-shutdown task
 schtasks.exe /Delete /TN "auto-shutdown" /F
 
+# Delete old auto-shutdown directory
+Remove-Item -LiteralPath "C:\auto-shutdown" -Force -Recurse
+
 # Define the path to the task's XML file
 $taskXmlPath = Join-Path -Path $PSScriptRoot -ChildPath "task-schedule.xml"
 # Write-Host $taskXmlPath
