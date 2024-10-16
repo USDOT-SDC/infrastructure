@@ -3,7 +3,7 @@ This Test Plan is designed to prescribe the scope, objectives, test
 activities and deliverables of the testing activities for the Infrastructure resources.
 
 ### In Scope Test Plan
-- Check the S3 VPC Endpoint
+- Check Auto-start to ensure it's working properly
 
 ### Out of Scope AWS Resources
 - Log4SDC
