@@ -70,10 +70,10 @@ resource "aws_dynamodb_table_item" "maintenance_window_saturday_maint" {
         "S" : "0 18 * * 6"
       },
       "duration" : {
-        "S" : "6:00"
+        "S" : "06:00"
       },
       "timezone" : {
-        "S" : "EST"
+        "S" : "Eastern Standard Time"
       },
       "terraform_configured" : { # lets everyone know this item is managed by Terraform
         "BOOL" : true
@@ -95,10 +95,10 @@ resource "aws_dynamodb_table_item" "maintenance_window_sunday_scan" {
         "S" : "0 0 * * 0"
       },
       "duration" : {
-        "S" : "6:00"
+        "S" : "06:00"
       },
       "timezone" : {
-        "S" : "EST"
+        "S" : "Eastern Standard Time"
       },
       "terraform_configured" : { # lets everyone know this item is managed by Terraform
         "BOOL" : true
