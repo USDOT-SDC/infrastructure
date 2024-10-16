@@ -1,8 +1,12 @@
 # SDC Infrastructure Release Notes
-We’re now releasing SDC Infrastructure: Version 0.4.2.
 
 # Get This Release
 ​To deploy this release, select this version's tag and follow the instructions in the Deployment Plan.
+
+## Version 0.6.0 (2024-10-17)
+### Changes
+- Add Auto-start/stop
+- Remove Instance Scheduler
 
 ## Version 0.5.0 (2024-06-07)
 ### Changes
