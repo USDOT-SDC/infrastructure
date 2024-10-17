@@ -30,11 +30,6 @@ module "auto_start" {
 #   default_tags = local.default_tags
 # }
 
-module "instance-scheduler" {
-  source = "./instance-scheduler"
-  common = local.common
-}
-
 module "utilities" {
   source                             = "./utilities"
   common                             = local.common

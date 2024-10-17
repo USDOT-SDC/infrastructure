@@ -6,3 +6,6 @@
 *.jpg binary
 *.webp binary
 *.zip binary
+
+# Explicit diff on XML files
+*.xml diff

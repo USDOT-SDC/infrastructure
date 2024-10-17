@@ -80,59 +80,61 @@ resource "aws_iam_role" "auto_start" {
       ]
     }
   )
-  inline_policy {
-    name = "instance_auto_start_policy"
-    policy = jsonencode(
-      {
-        Version : "2012-10-17",
-        Statement : [
-          {
-            Sid : "ReadOnlyDynamoDB",
-            Effect : "Allow",
-            Action : [
-              "dynamodb:GetItem",
-              "dynamodb:BatchGetItem",
-              "dynamodb:Scan",
-              "dynamodb:Query",
-              "dynamodb:ConditionCheckItem"
-            ],
-            Resource : [
-              aws_dynamodb_table.auto_starts.arn,
-              aws_dynamodb_table.maintenance_windows.arn,
-            ]
-          },
-          {
-            Sid : "DescribeStartInstances",
-            Effect : "Allow",
-            Action : [
-              "ec2:DescribeInstances",
-              "ec2:StartInstances"
-            ]
-            Resource : "*"
-          },
-          {
-            Sid : "CreateLogGroup"
-            Effect : "Allow",
-            Action : "logs:CreateLogGroup",
-            Resource : "arn:aws:logs:${var.common.region}:${var.common.account_id}:*"
-          },
-
-          {
-            Sid : "Logging"
-            Effect : "Allow",
-            Action : [
-              "logs:CreateLogStream",
-              "logs:PutLogEvents"
-            ],
-            Resource : [
-              "arn:aws:logs:${var.common.region}:${var.common.account_id}:log-group:/aws/lambda/${local.instance_auto_start_function_name}:*"
-            ]
-          }
-        ]
-      }
-    )
-  }
   tags = local.tags
+}
+
+resource "aws_iam_role_policy" "instance_auto_start_policy" {
+  name = "instance_auto_start_policy"
+  role = aws_iam_role.auto_start.id
+  policy = jsonencode(
+    {
+      Version : "2012-10-17",
+      Statement : [
+        {
+          Sid : "ReadOnlyDynamoDB",
+          Effect : "Allow",
+          Action : [
+            "dynamodb:GetItem",
+            "dynamodb:BatchGetItem",
+            "dynamodb:Scan",
+            "dynamodb:Query",
+            "dynamodb:ConditionCheckItem"
+          ],
+          Resource : [
+            aws_dynamodb_table.auto_starts.arn,
+            aws_dynamodb_table.maintenance_windows.arn,
+          ]
+        },
+        {
+          Sid : "DescribeStartInstances",
+          Effect : "Allow",
+          Action : [
+            "ec2:DescribeInstances",
+            "ec2:StartInstances"
+          ]
+          Resource : "*"
+        },
+        {
+          Sid : "CreateLogGroup"
+          Effect : "Allow",
+          Action : "logs:CreateLogGroup",
+          Resource : "arn:aws:logs:${var.common.region}:${var.common.account_id}:*"
+        },
+
+        {
+          Sid : "Logging"
+          Effect : "Allow",
+          Action : [
+            "logs:CreateLogStream",
+            "logs:PutLogEvents"
+          ],
+          Resource : [
+            "arn:aws:logs:${var.common.region}:${var.common.account_id}:log-group:/aws/lambda/${local.instance_auto_start_function_name}:*"
+          ]
+        }
+      ]
+    }
+  )
 }
 
 resource "aws_cloudwatch_event_rule" "auto_start" {
