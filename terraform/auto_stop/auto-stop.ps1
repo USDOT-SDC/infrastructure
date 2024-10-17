@@ -281,15 +281,38 @@ function Test-MaintenanceWindowActive {
 
     # Get the current time in UTC
     $currentTimeUTC = [System.DateTime]::UtcNow
-
+    
     foreach ($window in $MaintenanceWindows) {
         # Parse properties from the window object
         $cronExpression = $window.cron_expression
         $duration = [System.TimeSpan]::Parse($window.duration)
-        $timezone = $window.timezone
+
+        # Create a hashtable to map timezone abbreviations to their respective timezone IDs
+        $timezoneAbbreviationMap = @{
+            "PST" = "Pacific Standard Time"
+            "MST" = "Mountain Standard Time"
+            "CST" = "Central Standard Time"
+            "EST" = "Eastern Standard Time"
+            "UTC" = "UTC"
+            # Add more abbreviations as needed
+        }
+
+        $timezoneAbbreviation = $window.timezone
+        # Check if the abbreviation exists in the hashtable
+        if ($timezoneAbbreviationMap.ContainsKey($timezoneAbbreviation)) {
+            # Get the corresponding timezone ID
+            $timezone = $timezoneAbbreviationMap[$timezoneAbbreviation]
+            
+            # Retrieve the TimeZoneInfo object
+            $timezoneInfo = [System.TimeZoneInfo]::FindSystemTimeZoneById($timezone)
+        } else {
+            $msg =  "The timezone abbreviation $timezoneAbbreviation is not recognized."
+            Write-Host $msg
+            Write-Log $msg
+            continue
+        }
 
         # Convert the current UTC time to the window's timezone
-        $timezoneInfo = [System.TimeZoneInfo]::FindSystemTimeZoneById($timezone)
         $currentTimeInZone = [System.TimeZoneInfo]::ConvertTimeFromUtc($currentTimeUTC, $timezoneInfo)
 
         # Manually parse the cron expression
