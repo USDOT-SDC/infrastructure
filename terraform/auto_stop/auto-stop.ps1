@@ -94,7 +94,7 @@ function Get-MinIdleTimeInSecondsOfActiveUsers {
         $sessions -split "`n" | ForEach-Object {
             # Match quser output format: Username, SessionName, SessionID, State, IdleTime, LogonTime
             if ($_ -match '^\s*(\S+)\s+(\S+)\s+(\d+)\s+(\w+)\s+(\S+)\s+(.+)$') {
-                $username = $matches[1]
+                # $username = $matches[1]
                 # $sessionName = $matches[2]
                 # $sessionID = $matches[3]
                 $state = $matches[4]
