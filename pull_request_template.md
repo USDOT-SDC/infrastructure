@@ -166,11 +166,11 @@ SDC Support Team
 ## DevOps Checklist
 - [ ] **Pull Request Title**  
 The pull request title should be in accordance with the following naming convention:  
-_SDC-{parent} SDC-{child} CRB-{000}: {CRB Title}_  
+_{CRB Title} (SDC-{parent} SDC-{child} CRB-{000})_  
 For example:
-  - SDC-5332 SDC-3798 CRB-526: Web Portal: Fix Overwrite Export Request Issue
-  - SDC-5435 SDC-4870 CRB-515: Waze: Implement point-in-time recovery for DynamoDB
-  - SDC-6548 SDC-6480 CRB-522: Web Portal: Edit Footer to get rid of contract number
+  - Web Portal: Fix Overwrite Export Request Issue (SDC-5332 SDC-3798 CRB-526)
+  - Waze: Implement point-in-time recovery for DynamoDB (SDC-5435 SDC-4870 CRB-515)
+  - Web Portal: Edit Footer to get rid of contract number (SDC-6548 SDC-6480 CRB-522)
 
 - [ ] **Avoid Hardcoding**  
 Any string literal values that are likely to change should not be hardcoded and instead put into a config file or something like the AWS Systems Manager Parameter Store.
