@@ -129,3 +129,38 @@ resource "aws_s3_bucket_versioning" "instance_maintenance" {
   }
   depends_on = [aws_s3_bucket.instance_maintenance]
 }
+
+# === Secrets Bucket ===
+resource "aws_s3_bucket" "secrets" {
+  bucket = "${nonsensitive(data.aws_ssm_parameter.environment.value)}.sdc.dot.gov.platform.secrets"
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "secrets" {
+  bucket = aws_s3_bucket.secrets.bucket
+  rule {
+    bucket_key_enabled = false
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
+  depends_on = [aws_s3_bucket.secrets]
+}
+
+resource "aws_s3_bucket_ownership_controls" "secrets" {
+  bucket = aws_s3_bucket.secrets.id
+  rule {
+    object_ownership = "BucketOwnerEnforced"
+  }
+  depends_on = [aws_s3_bucket.secrets]
+}
+
+resource "aws_s3_bucket_versioning" "secrets" {
+  bucket = aws_s3_bucket.secrets.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+  depends_on = [aws_s3_bucket.secrets]
+}
