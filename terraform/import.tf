@@ -43,17 +43,18 @@
 #   id = "arn:aws:acm:us-east-1:505135622787:certificate/0dadb63d-8898-4260-ac16-545a2f0c4999"
 # }
 
-import {
-  to = aws_s3_bucket.secrets
-  id = "${nonsensitive(data.aws_ssm_parameter.environment.value)}.sdc.dot.gov.platform.secrets"
-}
+# uncomment for deployment
+# import {
+#   to = aws_s3_bucket.secrets
+#   id = "${nonsensitive(data.aws_ssm_parameter.environment.value)}.sdc.dot.gov.platform.secrets"
+# }
 
-import {
-  to = aws_s3_bucket_server_side_encryption_configuration.secrets
-  id = "${nonsensitive(data.aws_ssm_parameter.environment.value)}.sdc.dot.gov.platform.secrets"
-}
+# import {
+#   to = aws_s3_bucket_server_side_encryption_configuration.secrets
+#   id = "${nonsensitive(data.aws_ssm_parameter.environment.value)}.sdc.dot.gov.platform.secrets"
+# }
 
-import {
-  to = aws_s3_bucket_versioning.secrets
-  id = "${nonsensitive(data.aws_ssm_parameter.environment.value)}.sdc.dot.gov.platform.secrets"
-}
+# import {
+#   to = aws_s3_bucket_versioning.secrets
+#   id = "${nonsensitive(data.aws_ssm_parameter.environment.value)}.sdc.dot.gov.platform.secrets"
+# }
