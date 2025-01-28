@@ -57,20 +57,20 @@ resource "aws_dynamodb_table" "maintenance_windows" {
 }
 
 
-resource "aws_dynamodb_table_item" "maintenance_window_saturday_maint" {
+resource "aws_dynamodb_table_item" "maintenance_window" {
   table_name = aws_dynamodb_table.maintenance_windows.name
   hash_key   = aws_dynamodb_table.maintenance_windows.hash_key
 
   item = jsonencode(
     {
       "maintenance_window_id" : {
-        "S" : "SaturdayMaintenance"
+        "S" : "TueMaintenanceWindow"
       },
       "cron_expression" : {
-        "S" : "0 18 * * 6"
+        "S" : "0 18 * * 2"
       },
       "duration" : {
-        "S" : "06:00"
+        "S" : "12:00"
       },
       "timezone" : {
         "S" : "EST"
