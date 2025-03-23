@@ -1,9 +1,9 @@
 terraform {
-  required_version = "~> 1.9"
+  required_version = "~> 1.11"
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.84"
+      version = "~> 5.92"
     }
     null = {
       source  = "hashicorp/null"
@@ -19,7 +19,7 @@ terraform {
     }
     random = {
       source  = "hashicorp/random"
-      version = "~> 3.6"
+      version = "~> 3.7"
     }
   }
   backend "s3" {
