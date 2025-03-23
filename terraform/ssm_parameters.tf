@@ -16,6 +16,42 @@ data "aws_ssm_parameter" "account_id" {
   ]
 }
 
+resource "aws_ssm_parameter" "account_id_dev" {
+  name        = "account_id_dev"
+  description = "The account_id of the dev account"
+  type        = "String"
+  value       = " "
+  lifecycle {
+    ignore_changes = [
+      value,
+    ]
+  }
+}
+data "aws_ssm_parameter" "account_id_dev" {
+  name = "account_id_dev"
+  depends_on = [
+    aws_ssm_parameter.account_id_dev
+  ]
+}
+
+resource "aws_ssm_parameter" "account_id_prod" {
+  name        = "account_id_prod"
+  description = "The account_id of the prod account"
+  type        = "String"
+  value       = " "
+  lifecycle {
+    ignore_changes = [
+      value,
+    ]
+  }
+}
+data "aws_ssm_parameter" "account_id_prod" {
+  name = "account_id_prod"
+  depends_on = [
+    aws_ssm_parameter.account_id_prod
+  ]
+}
+
 resource "aws_ssm_parameter" "region" {
   name        = "region"
   description = "The primary region of this account"
