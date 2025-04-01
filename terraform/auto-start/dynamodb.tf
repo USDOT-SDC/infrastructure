@@ -8,7 +8,7 @@ resource "aws_dynamodb_table" "auto_starts" {
     type = "S"
   }
 
-  tags = local.tags
+  tags = local.common_tags
 }
 
 # resource "aws_dynamodb_table_item" "auto_start_example" {
@@ -53,7 +53,7 @@ resource "aws_dynamodb_table" "maintenance_windows" {
     type = "S"
   }
 
-  tags = local.tags
+  tags = local.common_tags
 }
 
 
