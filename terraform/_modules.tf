@@ -12,8 +12,10 @@ module "api" {
 }
 
 module "auto_start" {
-  source = "./auto_start"
-  common = local.common
+  module_name = "Auto Start"
+  module_slug = "auto-start"
+  source      = "./auto-start"
+  common      = local.common
 }
 
 # module "gitlab" {

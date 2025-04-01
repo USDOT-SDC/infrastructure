@@ -1,0 +1,14 @@
+# == AWS Lambda runtime for Python 3.13, as of 2024-11-14 ==
+# Do not include any of the following pre-installed packages:
+# awslambdaric
+# boto3
+# botocore
+# jmespath
+# pip
+# python-dateutil
+# s3transfer
+# six
+# simplejson
+# urllib3
+pytz~=2024.1
+croniter~=2.0

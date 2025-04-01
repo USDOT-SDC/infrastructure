@@ -1,27 +1,50 @@
 ### repo specific ignores ###
-sandbox*.*
-**/tfplan*
-terraform/auto_stop/auto-stop.zip
+# Terraform plans
+terraform/tfplans
+terraform/tfplans/*
 
-# Keep the example file
-!example.auto.tfvars
+# Terraform tfvars files
+*.tfvars
+*.tfvars.json
+!/terraform/env_vars/*
 
-# Local config files
-**/terraform/**/*.conf
+# Terraform local config files
+terraform/**/*.conf
 
 # Lambda deployment packages
-**/terraform/**/deploy
-**/terraform/**/deploy/**
-**/terraform/**/src/**/deployment-package
-**/terraform/**/src/**/deployment-package/**
-**/terraform/**/src/**/*.zip
-**/terraform/**/src/**/*.log
-**/terraform/**/src/**/keep-this-venv
-terraform/*.zip
-terraform/utilities/log4sdc/**/*.zip
+terraform/**/deployment
+terraform/**/src/site-packages
+terraform/api/token/deploy/lambda_deployment_package.zip
+terraform/utilities/log4sdc/lambda-elasticsearch/log4sdc-es-publisher.zip
 
-# Created by https://www.toptal.com/developers/gitignore/api/terraform,windows,linux,macos,visualstudiocode,notepadpp,python
-# Edit at https://www.toptal.com/developers/gitignore?templates=terraform,windows,linux,macos,visualstudiocode,notepadpp,python
+# Created by https://www.toptal.com/developers/gitignore/api/windows,linux,macos,terraform,python,visualstudiocode
+# Edit at https://www.toptal.com/developers/gitignore?templates=windows,linux,macos,terraform,python,visualstudiocode
+
+### Windows ###
+# Windows thumbnail cache files
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+
+# Dump file
+*.stackdump
+
+# Folder config file
+[Dd]esktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+
+# Windows shortcuts
+*.lnk
 
 ### Linux ###
 *~
@@ -71,9 +94,41 @@ Temporary Items
 # iCloud generated files
 *.icloud
 
-### NotepadPP ###
-# Notepad++ backups #
-*.bak
+### Terraform ###
+# Local .terraform directories
+**/.terraform
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+# Crash log files
+crash.log
+crash.*.log
+
+# Exclude all .tfvars files, which are likely to contain sensitive data, such as
+# password, private keys, and other secrets. These should not be part of version
+# control as they are data points which are potentially sensitive and subject
+# to change depending on the environment.
+# *.tfvars
+# *.tfvars.json
+
+# Ignore override files as they are usually used to override resources locally and so
+# are not checked in
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Include override files you do wish to add to version control using negated pattern
+# !example_override.tf
+
+# Include tfplan files to ignore the plan output of command: terraform plan -out=tfplan
+# example: *tfplan*
+
+# Ignore CLI configuration files
+.terraformrc
+terraform.rc
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
@@ -230,42 +285,22 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-### Terraform ###
-# Local .terraform directories
-**/.terraform/*
+# PyCharm
+#  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
+#  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
+#  and can be added to the global gitignore or merged into this file.  For a more nuclear
+#  option (not recommended) you can uncomment the following to ignore the entire idea folder.
+#.idea/
 
-# .tfstate files
-*.tfstate
-*.tfstate.*
+### Python Patch ###
+# Poetry local configuration file - https://python-poetry.org/docs/configuration/#local-configuration
+poetry.toml
 
-# Crash log files
-crash.log
-crash.*.log
+# ruff
+.ruff_cache/
 
-# Exclude all .tfvars files, which are likely to contain sensitive data, such as
-# password, private keys, and other secrets. These should not be part of version
-# control as they are data points which are potentially sensitive and subject
-# to change depending on the environment.
-*.tfvars
-*.tfvars.json
-!example.auto.tfvars
-
-# Ignore override files as they are usually used to override resources locally and so
-# are not checked in
-override.tf
-override.tf.json
-*_override.tf
-*_override.tf.json
-
-# Include override files you do wish to add to version control using negated pattern
-# !example_override.tf
-
-# Include tfplan files to ignore the plan output of command: terraform plan -out=tfplan
-# example: *tfplan*
-
-# Ignore CLI configuration files
-.terraformrc
-terraform.rc
+# LSP config files
+pyrightconfig.json
 
 ### VisualStudioCode ###
 .vscode/*
@@ -286,36 +321,4 @@ terraform.rc
 .history
 .ionide
 
-# Support for Project snippet scope
-.vscode/*.code-snippets
-
-# Ignore code-workspaces
-*.code-workspace
-
-### Windows ###
-# Windows thumbnail cache files
-Thumbs.db
-Thumbs.db:encryptable
-ehthumbs.db
-ehthumbs_vista.db
-
-# Dump file
-*.stackdump
-
-# Folder config file
-[Dd]esktop.ini
-
-# Recycle Bin used on file shares
-$RECYCLE.BIN/
-
-# Windows Installer files
-*.cab
-*.msi
-*.msix
-*.msm
-*.msp
-
-# Windows shortcuts
-*.lnk
-
-# End of https://www.toptal.com/developers/gitignore/api/terraform,windows,linux,macos,visualstudiocode,notepadpp,python
+# End of https://www.toptal.com/developers/gitignore/api/windows,linux,macos,terraform,python,visualstudiocode
