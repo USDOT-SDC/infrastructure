@@ -29,6 +29,20 @@ locals {
     terraform_bucket            = { id = aws_s3_bucket.terraform.id }
     backup_bucket               = { id = aws_s3_bucket.backup.id }
     instance_maintenance_bucket = { id = aws_s3_bucket.instance_maintenance.id }
+    config_version              = var.config_version
+    time = {
+      rotating = {
+        hours = {
+          8  = time_rotating._8hours.id
+          12 = time_rotating._12hours.id
+          24 = time_rotating._24hours.id
+        }
+        days = {
+          7  = time_rotating._7days.id
+          30 = time_rotating._30days.id
+        }
+      }
+    }
   }
   secrets_path      = "../../infrastructure-secrets"
   certificates_path = "${local.secrets_path}/certificates/${local.common.environment}"
