@@ -1,6 +1,7 @@
+import sys
+sys.path.append("./site-packages")
 import json
 import os
-import sys
 import pytz
 import boto3
 from botocore.exceptions import NoCredentialsError, PartialCredentialsError

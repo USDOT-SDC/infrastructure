@@ -58,3 +58,8 @@
 #   to = aws_s3_bucket_versioning.secrets
 #   id = "${nonsensitive(data.aws_ssm_parameter.environment.value)}.sdc.dot.gov.platform.secrets"
 # }
+
+import {
+  to = module.auto_start.aws_cloudwatch_log_group.this
+  id = "/aws/lambda/instance_auto_start"
+}
