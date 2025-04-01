@@ -52,3 +52,11 @@ locals {
 # variable "secrets_path" {
 #   default = "../../infrastructure-secrets"
 # }
+
+variable "fqdn" {
+  type = string
+}
+
+variable "config_version" {
+  type = string
+}
