@@ -6,7 +6,6 @@
 resource "aws_acm_certificate" "external" {
   private_key       = file("${local.certificates_path}/external/Private.key")
   certificate_body  = file("${local.certificates_path}/external/ServerCertificate.crt")
-  certificate_chain = file("${local.certificates_path}/external/Intermediate.crt")
 }
 
 # This cert is used for internal facing resources; GitLab, etc.
@@ -16,5 +15,4 @@ resource "aws_acm_certificate" "external" {
 resource "aws_acm_certificate" "internal" {
   private_key       = file("${local.certificates_path}/internal/Private.key")
   certificate_body  = file("${local.certificates_path}/internal/ServerCertificate.crt")
-  certificate_chain = file("${local.certificates_path}/internal/Intermediate.crt")
 }
