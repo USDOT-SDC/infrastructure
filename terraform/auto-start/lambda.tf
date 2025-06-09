@@ -5,7 +5,7 @@ locals {
   runtime                           = "${local.runtime_name}${local.runtime_version}"
   src_path                          = "${var.module_slug}\\src"
   packages_path                     = "${local.src_path}\\site-packages"
-  last_rotation                     = var.common.time.rotating.hours.12
+  last_rotation                     = var.common.time.rotating.days.30
   mark_path                         = "${local.packages_path}\\.mark"
 }
 
@@ -68,7 +68,7 @@ resource "aws_lambda_function" "this" {
   handler           = "lambda_function.lambda_handler"
   runtime           = local.runtime
   timeout           = 60
-  memory_size       = 160
+  memory_size       = 240
   logging_config {
     log_group  = aws_cloudwatch_log_group.this.name
     log_format = "Text"
