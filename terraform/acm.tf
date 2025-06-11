@@ -16,5 +16,5 @@ resource "aws_acm_certificate" "external" {
 resource "aws_acm_certificate" "internal" {
   private_key       = file("${local.certificates_path}/internal/Private.key")
   certificate_body  = file("${local.certificates_path}/internal/Server.pem")
-  certificate_chain = file("${local.certificates_path}/external/Intermediate.pem")
+  certificate_chain = file("${local.certificates_path}/internal/Intermediate.pem")
 }
