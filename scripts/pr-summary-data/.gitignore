@@ -1,0 +1,5 @@
+# Ignore all PR summary data
+*
+
+# But keep this .gitignore
+!.gitignore
