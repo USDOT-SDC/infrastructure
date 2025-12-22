@@ -157,3 +157,39 @@ resource "aws_vpc_endpoint_policy" "sqs_interface" {
     }
   )
 }
+
+# STS Interface
+resource "aws_vpc_endpoint" "sts_interface" {
+  vpc_id            = var.common.network.vpc.id
+  vpc_endpoint_type = "Interface"
+  service_name      = "com.amazonaws.${var.common.region}.sts"
+  security_group_ids = [ var.common.network.default_security_group.id ]
+  subnet_ids = concat(
+    [
+      aws_subnet.support.id,
+      aws_subnet.researcher.id
+    ],
+    aws_subnet.infrastructure[*].id
+  )
+  tags = {
+    "Name" = "STS Interface"
+  }
+}
+
+resource "aws_vpc_endpoint_policy" "sts_interface" {
+  vpc_endpoint_id = aws_vpc_endpoint.sts_interface.id
+  policy = jsonencode(
+    {
+      "Version" : "2008-10-17",
+      "Statement" : [
+        {
+          "Sid" : "AllowAll",
+          "Effect" : "Allow",
+          "Principal" : "*",
+          "Action" : "*",
+          "Resource" : "*"
+        }
+      ]
+    }
+  )
+}

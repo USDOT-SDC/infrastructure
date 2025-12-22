@@ -1,15 +1,15 @@
-module "api" {
-  module_name = "API"
-  module_slug = "api"
-  source      = "./api"
-  common      = local.common
-  route53_zones = {
-    public  = aws_route53_zone.public
-    private = aws_route53_zone.private
-  }
-  pub_fqdn     = local.pub_fqdn
-  certificates = local.certificates
-}
+# module "api" {
+#   module_name = "API"
+#   module_slug = "api"
+#   source      = "./api"
+#   common      = local.common
+#   route53_zones = {
+#     public  = aws_route53_zone.public
+#     private = aws_route53_zone.private
+#   }
+#   pub_fqdn     = local.pub_fqdn
+#   certificates = local.certificates
+# }
 
 module "auto_start" {
   module_name = "Auto Start"
@@ -38,11 +38,11 @@ module "utilities" {
   research_teams_vpc_endpoint_lambda = local.research_teams_vpc_endpoint_lambda
 }
 
-module "log4sdc" {
-  source       = "./utilities/log4sdc"
-  common       = local.common
-  default_tags = local.default_tags
-}
+# module "log4sdc" {
+#   source       = "./utilities/log4sdc"
+#   common       = local.common
+#   default_tags = local.default_tags
+# }
 
 module "vpc" {
   source = "./vpc"
