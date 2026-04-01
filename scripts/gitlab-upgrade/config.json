@@ -1,0 +1,8 @@
+{
+    "ssh_key_path": "%UserProfile%\\.ssh\\ost-sdc-prod.pem",
+    "ssh_user": "ec2-user",
+    "aws_profile": "sdc-prod",
+    "instance_id": "i-05d528e00209fe1f7",
+    "ip_address": "10.75.210.236",
+    "bucket": "prod-dot-sdc-gitlab-backup-004118380849"
+}

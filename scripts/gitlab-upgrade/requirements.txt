@@ -1,0 +1,4 @@
+boto3~=1.42
+paramiko~=4.0
+requests~=2.32
+packaging~=21.0
