@@ -1,4 +1,16 @@
-# GitLab Upgrade Script
+# GitLab Upgrade Scripts
+
+Three scripts for upgrading and managing GitLab EE on RHEL-based EC2 instances.
+
+| Script | Purpose |
+|---|---|
+| `setup_and_run.cmd` + `upgrade.py` | Perform a one-step version upgrade |
+| `trouble-shoot.py` | Collect diagnostics when GitLab is unhealthy |
+| `status-gitlab.py` | Check, start, restart, and watch GitLab services |
+
+---
+
+## upgrade.py
 
 Automates one-step-at-a-time GitLab EE upgrades on RHEL-based EC2 instances.
 GitLab requires sequential version stops — this script determines the correct
@@ -135,3 +147,83 @@ over. Choosing not to resume clears the status and starts fresh.
 Each run upgrades exactly **one version stop**. If the upgrade path shows
 multiple stops between current and latest, re-run `setup_and_run.cmd` after
 each successful upgrade until you reach the target version.
+
+---
+
+## trouble-shoot.py
+
+Collects a comprehensive diagnostic snapshot of the GitLab instance and writes
+everything to a timestamped log in `logs\`. Use this when GitLab is unhealthy
+after an upgrade or at any other time.
+
+Log filename format: `logs\trouble-shoot_YYYYMMDD_HHMMSS.log`
+
+### Running
+
+```cmd
+.venv\Scripts\python.exe trouble-shoot.py
+```
+
+Share the log file to diagnose issues. No changes are made to the instance —
+read-only checks only.
+
+### What it collects
+
+| Category | Details |
+|---|---|
+| **AWS** | EC2 instance state, tags, S3 backup age and size |
+| **System** | Disk space, memory, CPU load, top processes, OOM killer events |
+| **GitLab version** | RPM query, version manifest, gitlab-rake |
+| **Services** | Full `gitlab-ctl status` output |
+| **Processes** | Whether puma, sidekiq, nginx, postgres, redis are running |
+| **Ports** | Whether 80/443/8080/8060 are listening |
+| **Health endpoints** | HTTP status from `/-/health`, `/-/readiness`, `/-/liveness` |
+| **Database** | PostgreSQL connection test, pending migration status |
+| **Reconfigure log** | Last 100 lines of reconfigure output |
+| **Log files** | Rails, Puma, Sidekiq, PostgreSQL, Redis, Nginx, syslog |
+| **yum history** | Recent transactions confirming what was installed |
+| **SELinux / firewall** | Enforcing mode, recent denials, firewall rules |
+| **gitlab.rb** | Non-secret config lines |
+
+---
+
+## status-gitlab.py
+
+Checks GitLab service status via SSH and optionally starts, restarts, or
+watches services. Writes output to a timestamped log in `logs\`.
+
+Log filename format: `logs\status-gitlab_YYYYMMDD_HHMMSS.log`
+
+### Running
+
+```cmd
+.venv\Scripts\python.exe status-gitlab.py [options]
+```
+
+### Options
+
+| Option | Description |
+|---|---|
+| *(no args)* | Show service status table |
+| `--start` | Start all `normally up` services that are down |
+| `--restart` | Restart all services |
+| `--reconfigure` | Run `gitlab-ctl reconfigure` (output streamed live) |
+| `--tail` | Tail logs for all services that are currently down |
+| `--tail puma nginx` | Tail logs for specific named services |
+| `--watch` | Poll every 10s until all services are up |
+| `--watch 30` | Poll every 30s |
+| `--service NAME [NAME ...]` | Scope `--start`, `--restart`, or `--tail` to specific services |
+| `--config PATH` | Use an alternate config file (default: `config.json`) |
+
+Options can be combined. For example, to start any down services and then
+keep watching until everything is healthy:
+
+```cmd
+.venv\Scripts\python.exe status-gitlab.py --start --watch
+```
+
+To restart a single service and tail its log:
+
+```cmd
+.venv\Scripts\python.exe status-gitlab.py --restart --tail --service puma
+```
