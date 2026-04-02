@@ -6,14 +6,15 @@
 	],
 	"settings": {
 		"cSpell.words": [
-			"manylinux",
-			"pycache",
 			"docstrings",
 			"FISMA",
 			"hostedzone",
 			"ISSO",
+			"keepalive",
 			"manylinux",
-			"tfapply"
+			"pycache",
+			"tfapply",
+			"Upgrader"
 		]
 	}
 }
