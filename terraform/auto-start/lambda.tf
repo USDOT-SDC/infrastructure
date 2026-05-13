@@ -1,7 +1,7 @@
 locals {
   instance_auto_start_function_name = "instance_auto_start"
   runtime_name                      = "python"
-  runtime_version                   = "3.13"
+  runtime_version                   = "3.14"
   runtime                           = "${local.runtime_name}${local.runtime_version}"
   src_path                          = "${var.module_slug}\\src"
   packages_path                     = "${local.src_path}\\site-packages"
@@ -17,6 +17,8 @@ resource "terraform_data" "pip_install" {
     mark_file_exists = fileexists(local.mark_path)
     # Ensures site packages are rebuilt and upgraded often
     last_rotation = local.last_rotation
+    # If runtime changes, we need to rebuild packages for the new runtime
+    runtime = local.runtime
   }
 
   provisioner "local-exec" {
