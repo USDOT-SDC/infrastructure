@@ -1,20 +1,3 @@
-# resource "aws_subnet" "firewall" {
-#   vpc_id     = var.common.network.vpc.id
-#   cidr_block = local.subnet_firewall.cidr_block
-#   tags = {
-#     Name = local.subnet_firewall.name
-#   }
-# }
-
-# resource "aws_subnet" "routing" {
-#   count      = length(local.subnets_routing)
-#   vpc_id     = var.common.network.vpc.id
-#   cidr_block = local.subnets_routing[count.index].cidr_block
-#   tags = {
-#     Name = local.subnets_routing[count.index].name
-#   }
-# }
-
 resource "aws_subnet" "support" {
   vpc_id     = var.common.network.vpc.id
   cidr_block = local.subnets.support.cidr_block
@@ -22,10 +5,7 @@ resource "aws_subnet" "support" {
     {
       Name = local.subnets.support.name
     },
-    {
-      "Panorama-AWS-Acct"     = "ost-sdc-${var.common.environment}"
-      "Panorama-AWS-AllowAll" = "Yes"
-    }
+    local.subnet_tags
   )
 }
 
@@ -36,10 +16,7 @@ resource "aws_subnet" "researcher" {
     {
       Name = local.subnets.researcher.name
     },
-    {
-      "Panorama-AWS-Acct"     = "ost-sdc-${var.common.environment}"
-      "Panorama-AWS-AllowAll" = "Yes"
-    }
+    local.subnet_tags
   )
 }
 
@@ -51,9 +28,6 @@ resource "aws_subnet" "infrastructure" {
     {
       Name = local.subnets.infrastructures[count.index].name
     },
-    {
-      "Panorama-AWS-Acct"     = "ost-sdc-${var.common.environment}"
-      "Panorama-AWS-AllowAll" = "Yes"
-    }
+    local.subnet_tags
   )
 }
