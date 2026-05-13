@@ -1,0 +1,26 @@
+{
+    "_comment": "This is a template for storing external resource credentials. It should be copied to C:\\ai-tools\\external-resources.json and updated with actual credentials. Your file should not be committed to version control.",
+    "gitlab": {
+        "com": {
+            "HOST": "https://gitlab.com",
+            "PERSONAL_ACCESS_TOKEN": "YOUR_PERSONAL_ACCESS_TOKEN"
+        }
+    },
+    "github": {
+        "com": {
+            "HOST": "https://github.com",
+            "PERSONAL_ACCESS_TOKEN": "YOUR_PERSONAL_ACCESS_TOKEN"
+        },
+        "dot": {
+            "HOST": "https://git.dot.gov",
+            "PERSONAL_ACCESS_TOKEN": "YOUR_PERSONAL_ACCESS_TOKEN"
+        }
+    },
+    "atlassian": {
+        "secure-data-commons": {
+            "HOST": "https://securedatacommons.atlassian.net/",
+            "ACCOUNT_EMAIL": "first.last.ctr@dot.gov",
+            "PERSONAL_ACCESS_TOKEN": "YOUR_PERSONAL_ACCESS_TOKEN"
+        }
+    }
+}
