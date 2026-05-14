@@ -1,7 +1,12 @@
 {
 	"folders": [
 		{
+			"name": "Infrastructure",
 			"path": "."
+		},
+		{
+			"name": "Infrastructure Secrets",
+			"path": "../infrastructure-secrets"
 		}
 	],
 	"settings": {

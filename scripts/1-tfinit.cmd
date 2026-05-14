@@ -15,7 +15,7 @@ goto end
 :normal_start
 cls
 set env=%1
-if "%2"=="" set AWS_PROFILE=%env%
+if "%2"=="" set AWS_PROFILE=sdc-%env%
 if not "%2"=="" set AWS_PROFILE=%2
 echo Your active AWS profile is: %AWS_PROFILE%
 set bucket=%env%.sdc.dot.gov.platform.terraform
