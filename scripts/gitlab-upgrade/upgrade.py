@@ -451,10 +451,14 @@ class GitLabUpgrader:
         if not self._connect_ssh():
             return False
         
-        # Step 1: Update package cache (excluding gitlab-ee to prevent yum from
-        # jumping to the latest available version instead of the pinned target)
+        # Step 1: Update system packages (excluding gitlab-ee to prevent yum from
+        # jumping to the latest available version instead of the pinned target).
+        # Clean packages first to avoid stale DNF cache causing [Errno 2] failures.
         self._log("[1/3] Updating system packages (excluding gitlab-ee)...")
         self._save_status("upgrade_yum_update")
+
+        self._log("Cleaning DNF package cache...")
+        self._run_ssh_command("sudo yum clean packages", timeout=120)
 
         exit_code, stdout, stderr = self._run_ssh_command(
             "sudo yum update -y --exclude=gitlab-ee",
