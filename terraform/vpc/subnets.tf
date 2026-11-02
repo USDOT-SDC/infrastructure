@@ -7,6 +7,10 @@ resource "aws_subnet" "support" {
     },
     local.subnet_tags
   )
+
+  lifecycle {
+    ignore_changes = [tags["Panorama-AWS-AllowAll"]]
+  }
 }
 
 resource "aws_subnet" "researcher" {
@@ -18,6 +22,10 @@ resource "aws_subnet" "researcher" {
     },
     local.subnet_tags
   )
+
+  lifecycle {
+    ignore_changes = [tags["Panorama-AWS-AllowAll"]]
+  }
 }
 
 resource "aws_subnet" "infrastructure" {
@@ -30,4 +38,8 @@ resource "aws_subnet" "infrastructure" {
     },
     local.subnet_tags
   )
+
+  lifecycle {
+    ignore_changes = [tags["Panorama-AWS-AllowAll"]]
+  }
 }
