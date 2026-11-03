@@ -1,4 +1,6 @@
 ### repo specific ignores ###
+.claude/
+
 # Terraform plans
 terraform/tfplans
 terraform/tfplans/*
