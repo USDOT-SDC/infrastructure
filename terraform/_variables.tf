@@ -67,7 +67,18 @@ locals {
 #   default = "../../infrastructure-secrets"
 # }
 
-variable "fqdn" {
+variable "ext_fqdn" {
+  description = "External facing domain name (e.g. sdc-dev.dot.gov)"
+  type = string
+}
+
+variable "int_fqdn" {
+  description = "Internal facing domain name (e.g. dev.sdc.dot.gov)"
+  type = string
+}
+
+variable "int_ad_fqdn" {
+  description = "Internal AD domain name (e.g. dev-ad.sdc.dot.gov)"
   type = string
 }
 
